@@ -1,5 +1,5 @@
 unit FrmAdicConf;
-//juju123
+//juju1232
 interface
 
 uses
