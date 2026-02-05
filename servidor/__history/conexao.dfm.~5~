@@ -1,0 +1,49 @@
+object Dm: TDm
+  OldCreateOrder = False
+  Height = 574
+  Width = 554
+  object Fconexao: TFDConnection
+    Params.Strings = (
+      'Database=C:\SISTEMA\CADASTRO.FDB'
+      'User_Name=SYSDBA'
+      'Password=masterkey'
+      'DriverID=FB')
+    Left = 32
+    Top = 24
+  end
+  object FDdados: TFDQuery
+    Connection = Fconexao
+    Left = 136
+    Top = 24
+  end
+  object FDCadProd: TFDQuery
+    Connection = Fconexao
+    Left = 208
+    Top = 24
+  end
+  object FDTransaction1: TFDTransaction
+    Connection = Fconexao
+    Left = 40
+    Top = 104
+  end
+  object DtCadProd: TDataSource
+    DataSet = FDCadProd
+    Left = 208
+    Top = 88
+  end
+  object FDMVenda: TFDQuery
+    Connection = Fconexao
+    Left = 280
+    Top = 24
+  end
+  object QryCadClientes: TFDQuery
+    Connection = Fconexao
+    Left = 32
+    Top = 208
+  end
+  object DSCadClientes: TDataSource
+    DataSet = QryCadClientes
+    Left = 32
+    Top = 264
+  end
+end

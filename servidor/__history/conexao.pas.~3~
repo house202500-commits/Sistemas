@@ -1,0 +1,59 @@
+unit conexao;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB,
+  FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
+
+type
+  TDm = class(TDataModule)
+    Fconexao: TFDConnection;
+    FDdados: TFDQuery;
+    FDCadProd: TFDQuery;
+    FDTransaction1: TFDTransaction;
+    DtCadProd: TDataSource;
+
+    procedure DataModuleCreate(AOwner: TComponent);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Dm: TDm;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+procedure TDm.DataModuleCreate(AOwner: TComponent);
+begin
+  // Configura a conexão UMA ÚNICA VEZ no DataModule
+  Fconexao.Params.Clear;
+  Fconexao.Params.Add('DriverID=FB');
+  Fconexao.Params.Add('Database=C:\SISTEMA\CADASTRO.FDB');
+  Fconexao.Params.Add('User_Name=SYSDBA');
+  Fconexao.Params.Add('Password=masterkey');
+  Fconexao.Params.Add('Protocol=TCPIP');
+  Fconexao.Params.Add('Server=localhost');
+  Fconexao.Params.Add('Port=3050');
+  Fconexao.LoginPrompt := False;
+
+  // Tenta conectar (opcional)
+  try
+    Fconexao.Connected := True;
+  except
+    // Pode deixar para conectar sob demanda
+  end;
+end;
+
+
+end.
