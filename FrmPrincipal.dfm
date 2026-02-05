@@ -3,7 +3,7 @@ object Principal: TPrincipal
   Top = 0
   Caption = 'Principal'
   ClientHeight = 201
-  ClientWidth = 385
+  ClientWidth = 408
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

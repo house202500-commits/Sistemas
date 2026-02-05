@@ -150,7 +150,8 @@ end;
 procedure TFrmLista.btnSelectClick(Sender: TObject);
 begin
 
-  FrmVenda.Visible := not FrmVenda.Visible;
+  FrmVenda.show;
+
   FrmVenda.Edit3.Text := LbClient.Caption ;
   FrmVenda.LisBox.Items.Add(
     'Endereço: ' + LbEnderco.Caption + ', ' +

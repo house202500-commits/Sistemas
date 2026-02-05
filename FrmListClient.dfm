@@ -82,7 +82,6 @@ object FrmLista: TFrmLista
     Color = clSilver
     ParentBackground = False
     TabOrder = 1
-    ExplicitLeft = 5
     object Label1: TLabel
       Left = 15
       Top = 24

@@ -20,6 +20,7 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TDm, Dm);
   Application.CreateForm(TPrincipal, Principal);
   Application.CreateForm(TFCadProdutos, FCadProdutos);
   Application.CreateForm(TFrmClientes, FrmClientes);
@@ -28,7 +29,6 @@ begin
   Application.CreateForm(TFrmAdicionar, FrmAdicionar);
   Application.CreateForm(TFrmConsulta, FrmConsulta);
   Application.CreateForm(TFrmLista, FrmLista);
-  Application.CreateForm(TDm, Dm);
   Application.CreateForm(TFrmClientVenda, FrmClientVenda);
   Application.CreateForm(TFrmTelaVendas, FrmTelaVendas);
   Application.CreateForm(TFrmTelaCompras, FrmTelaCompras);

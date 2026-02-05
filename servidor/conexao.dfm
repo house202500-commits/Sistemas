@@ -1,10 +1,10 @@
 object Dm: TDm
   OldCreateOrder = False
-  Height = 574
-  Width = 554
+  Height = 284
+  Width = 373
   object Fconexao: TFDConnection
     Params.Strings = (
-      'Database=C:\SISTEMA\CADASTRO.FDB'
+      'Database=C:\SISTEMA_BancoDados\CADASTRO.FDB'
       'User_Name=SYSDBA'
       'Password=masterkey'
       'DriverID=FB')
@@ -28,8 +28,8 @@ object Dm: TDm
   end
   object DtCadProd: TDataSource
     DataSet = FDCadProd
-    Left = 208
-    Top = 88
+    Left = 128
+    Top = 192
   end
   object FDMVenda: TFDQuery
     Connection = Fconexao
@@ -39,12 +39,12 @@ object Dm: TDm
   object QryCadClientes: TFDQuery
     AfterScroll = QryCadClientesAfterScroll
     Connection = Fconexao
-    Left = 32
-    Top = 208
+    Left = 136
+    Top = 104
   end
   object DSCadClientes: TDataSource
     DataSet = QryCadClientes
-    Left = 32
-    Top = 264
+    Left = 24
+    Top = 192
   end
 end
