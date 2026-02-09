@@ -2,8 +2,8 @@ object Principal: TPrincipal
   Left = 0
   Top = 0
   Caption = 'Principal'
-  ClientHeight = 201
-  ClientWidth = 408
+  ClientHeight = 222
+  ClientWidth = 452
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,6 +11,7 @@ object Principal: TPrincipal
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poScreenCenter
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton

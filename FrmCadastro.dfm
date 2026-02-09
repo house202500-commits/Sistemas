@@ -37,7 +37,6 @@ object FrmClientes: TFrmClientes
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
-    ExplicitLeft = 5
     object Label1: TLabel
       Left = 30
       Top = 369
@@ -454,8 +453,8 @@ object FrmClientes: TFrmClientes
     end
     object Edit4: TEdit
       AlignWithMargins = True
-      Left = 484
-      Top = 363
+      Left = 490
+      Top = 366
       Width = 199
       Height = 32
       Margins.Left = 10
@@ -655,26 +654,13 @@ object FrmClientes: TFrmClientes
       TabOrder = 16
       OnClick = Button1Click
     end
-    object DBGrid1: TDBGrid
-      Left = 467
-      Top = 472
-      Width = 320
-      Height = 120
-      DataSource = Dm.DSCadClientes
-      TabOrder = 17
-      TitleFont.Charset = DEFAULT_CHARSET
-      TitleFont.Color = clWindowText
-      TitleFont.Height = -11
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Style = []
-    end
     object Button2: TButton
       Left = 25
       Top = 880
       Width = 75
       Height = 25
       Caption = 'Button2'
-      TabOrder = 18
+      TabOrder = 17
       OnClick = Button2Click
     end
     object edtIDCliente: TEdit
@@ -682,7 +668,7 @@ object FrmClientes: TFrmClientes
       Top = 864
       Width = 121
       Height = 21
-      TabOrder = 19
+      TabOrder = 18
       Text = 'edtIDCliente'
     end
     object Button3: TButton
@@ -691,7 +677,7 @@ object FrmClientes: TFrmClientes
       Width = 75
       Height = 25
       Caption = 'Button3'
-      TabOrder = 20
+      TabOrder = 19
       OnClick = Button3Click
     end
     object Button4: TButton
@@ -700,7 +686,7 @@ object FrmClientes: TFrmClientes
       Width = 75
       Height = 25
       Caption = 'Button4'
-      TabOrder = 21
+      TabOrder = 20
       OnClick = Button4Click
     end
     object DateTimePicker1: TDateTimePicker
@@ -716,7 +702,7 @@ object FrmClientes: TFrmClientes
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 22
+      TabOrder = 21
     end
     object Edit6: TEdit
       AlignWithMargins = True
@@ -734,8 +720,21 @@ object FrmClientes: TFrmClientes
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 23
+      TabOrder = 22
       OnChange = EdtCPFChange
+    end
+    object DBGrid1: TDBGrid
+      Left = 467
+      Top = 891
+      Width = 320
+      Height = 55
+      DataSource = Dm.DSCadClientes
+      TabOrder = 23
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
     end
   end
 end

@@ -73,7 +73,6 @@ type
     Edit7: TEdit;
     Button1: TButton;
     Label20: TLabel;
-    DBGrid1: TDBGrid;
     Button2: TButton;
     Label22: TLabel;
     edtIDCliente: TEdit;
@@ -86,6 +85,7 @@ type
     Label25: TLabel;
     Label26: TLabel;
     Label27: TLabel;
+    DBGrid1: TDBGrid;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Edit2Click(Sender: TObject);
@@ -327,10 +327,10 @@ begin
   DateTimePicker1.Date := Now;
   DateTimePicker1.MaxDate := Now;
 
-  DBGrid1.Left := 550;
-  DBGrid1.Top := 140;
-  DBGrid1.Width := 600;
-  DBGrid1.Height := 500;
+ // DBGrid1.Left := 550;
+ // DBGrid1.Top := 140;
+ // DBGrid1.Width := 600;
+ // DBGrid1.Height := 500;
 
   Label22.Caption := 'ID Cliente:';
   edtIDCliente.ReadOnly := True;
