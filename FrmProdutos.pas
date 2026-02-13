@@ -32,7 +32,7 @@ uses
   FireDAC.Phys, FireDAC.Phys.FB, // Para FireBird
   FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client,FrmConsult;
+  FireDAC.Comp.Client,FrmConsult, System.UITypes;
 
 
 
@@ -59,9 +59,7 @@ type
     Timer1: TTimer;
     Image2: TImage;
     Label4: TLabel;
-    Button1: TButton;
-    Button3: TButton;
-    Label6: TLabel;
+    btnVoltar: TButton;
 
     procedure FormCreate(Sender: TObject);
   //  procedure Button1Click(Sender: TObject);
@@ -77,8 +75,12 @@ type
 
     procedure TesteCompletoClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
+    procedure btnVoltarClick(Sender: TObject);
+
+    procedure AtualizarGridProdutos1CellClick(Column: TColumn);
+    procedure Image2MouseEnter(Sender: TObject);
+    procedure Image2MouseLeave(Sender: TObject);
+    procedure edtCodChange(Sender: TObject);
 
   private
     { Private declarations }
@@ -92,7 +94,7 @@ var
 
 implementation
  uses
- FrmCadastro;
+ FrmCadastro,FrmPrincipal;
 {$R *.dfm}
 
 
@@ -158,6 +160,11 @@ begin
     Title.Caption := 'Data Cad.';
     Width := 120;
   end;
+end;
+
+procedure TFCadProdutos.AtualizarGridProdutos1CellClick(Column: TColumn);
+begin
+  ListB.Visible:= not ListB.Visible;
 end;
 
 procedure TFCadProdutos.btnEntrarClick(Sender: TObject);
@@ -254,13 +261,12 @@ begin
 
       Dm.Fconexao.Commit;
 
-
+       ListB.Items.Add('');
       ListB.Items.Add('✅ Data: ' + FormatDateTime('dd/MM/yyyy HH:mm:ss', Now));
       ListB.Items.Add('✅ Código: ' + edtCod.Text);
       ListB.Items.Add('✅ Descrição: ' + EdtDescricao.Text);
       ListB.Items.Add('✅ Valor: R$ ' + FormatFloat('#,##0.00', ValorProduto));
       ListB.Items.Add('');
-
 
       if (ListB.Items.Count > 1) and
          (ListB.Items[ListB.Items.Count - 2] = '--- Fim da lista ---') then
@@ -317,7 +323,7 @@ begin
         edtCod.SetFocus;
       end;
     end;
-
+      Image2.Visible:= True;
   finally
     QryInsert.Free;
     MS.Free;
@@ -336,9 +342,12 @@ begin
 end;
 
 
-procedure TFCadProdutos.Button1Click(Sender: TObject);
+procedure TFCadProdutos.btnVoltarClick(Sender: TObject);
 begin
-FrmClientes.visible := not FrmClientes.visible;
+  if MessageDlg('Deseja voltar ao inicio?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    Self.Close;
+  end;
 end;
 
 procedure TFCadProdutos.Button2Click(Sender: TObject);
@@ -399,16 +408,23 @@ begin
   end;
 end;
 
-procedure TFCadProdutos.Button3Click(Sender: TObject);
-begin
- FrmConsulta.Visible := not FrmConsulta.Visible;
-end;
+
 
 procedure TFCadProdutos.TesteCompletoClick(Sender: TObject);
 begin
   ShowMessage('Dm = ' + BoolToStr(Dm <> nil, True));
   if Dm <> nil then
     ShowMessage('Fconexao = ' + BoolToStr(Dm.Fconexao <> nil, True));
+end;
+
+procedure TFCadProdutos.edtCodChange(Sender: TObject);
+begin
+  if Length(Trim(edtCod.Text)) = 6 then
+  begin
+    EdtDescricao.SetFocus;
+  //  Edit3.TextHint := 'Nome ...';
+
+  end;
 end;
 
 procedure TFCadProdutos.edtCodMouseEnter(Sender: TObject);
@@ -451,6 +467,18 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TFCadProdutos.Image2MouseEnter(Sender: TObject);
+begin
+   ListB.Visible:= True;
+   AtualizarGridProdutos1.Visible:= False;
+end;
+
+procedure TFCadProdutos.Image2MouseLeave(Sender: TObject);
+begin
+    ListB.Visible:= False;
+    AtualizarGridProdutos1.Visible:= True;
 end;
 
 end.

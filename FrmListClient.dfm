@@ -68,6 +68,27 @@ object FrmLista: TFrmLista
       Font.Style = []
       ParentFont = False
     end
+    object LbIDCliente: TLabel
+      Left = 456
+      Top = 23
+      Width = 92
+      Height = 21
+      Caption = 'ID_CLIENTE'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object edtIdCep: TEdit
+      Left = 456
+      Top = 61
+      Width = 121
+      Height = 21
+      TabOrder = 0
+      Text = '1'
+    end
   end
   object Panel1: TPanel
     AlignWithMargins = True
@@ -150,14 +171,16 @@ object FrmLista: TFrmLista
     object LbEnderco: TLabel
       Left = 106
       Top = 24
-      Width = 5
+      Width = 479
       Height = 21
+      AutoSize = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      WordWrap = True
     end
     object LbCidade: TLabel
       Left = 106
@@ -220,45 +243,37 @@ object FrmLista: TFrmLista
       Font.Style = []
       ParentFont = False
     end
-    object LbNum: TLabel
-      Left = 250
-      Top = 24
-      Width = 5
-      Height = 21
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -17
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
     object LbUF: TLabel
-      Left = 175
-      Top = 64
-      Width = 5
+      Left = 608
+      Top = 200
+      Width = 20
       Height = 21
+      Caption = 'UF'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      Visible = False
     end
     object LbBairro: TLabel
-      Left = 300
-      Top = 24
-      Width = 5
+      Left = 608
+      Top = 275
+      Width = 44
       Height = 21
+      Caption = 'Bairro'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      Visible = False
     end
     object LbCEP: TLabel
-      Left = 320
-      Top = 64
+      Left = 610
+      Top = 310
       Width = 78
       Height = 21
       Caption = '00000-000'
@@ -268,6 +283,34 @@ object FrmLista: TFrmLista
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      Visible = False
+    end
+    object Label6: TLabel
+      Left = 655
+      Top = 213
+      Width = 31
+      Height = 13
+      Caption = 'Label6'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object LbNum: TLabel
+      Left = 608
+      Top = 240
+      Width = 34
+      Height = 21
+      Caption = 'Num'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Visible = False
     end
     object Panel3: TPanel
       AlignWithMargins = True
@@ -386,6 +429,104 @@ object FrmLista: TFrmLista
         OnMouseLeave = btnEdtClienMouseLeave
         ExplicitLeft = -1
         ExplicitHeight = 29
+      end
+      object btnConfirm: TSpeedButton
+        Left = 0
+        Top = 0
+        Width = 130
+        Height = 30
+        Align = alClient
+        Caption = 'Confirmar'
+        Flat = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -15
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        Glyph.Data = {
+          36090000424D3609000000000000360000002800000018000000180000000100
+          2000000000000009000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          000000000000000000000000000000000000000000000000000000000000C9C9
+          C9C9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC7C7C7C70000
+          000003030303D1D1D1D1EAEAEAEA989898984242424203030303000000000000
+          000000000000000000000000000000000000000000000000000000000000F6F6
+          F6F6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8C8C8C80000
+          000001010101EAEAEAEAFFFFFFFFFFFFFFFFFFFFFFFFE6E6E6E65D5D5D5D0000
+          000000000000000000000000000000000000000000000000000000000000DCDC
+          DCDCFFFFFFFF3838383800000000000000000000000000000000000000000000
+          00000000000099999999FFFFFFFFE3E3E3E3E0E0E0E0FFFFFFFFFEFEFEFE6767
+          676700000000000000000000000000000000000000000000000000000000A3A3
+          A3A3FFFFFFFF8585858500000000000000000000000000000000000000000000
+          00000000000044444444FFFFFFFFE1E1E1E1010101016A6A6A6AFEFEFEFEFEFE
+          FEFE676767670000000000000000000000000000000000000000000000004A4A
+          4A4AFFFFFFFFEDEDEDED15151515000000000000000000000000000000000000
+          00000000000004040404E8E8E8E8FFFFFFFF6A6A6A6A0000000067676767FEFE
+          FEFEFEFEFEFE6767676700000000000000000000000000000000000000000202
+          0202CACACACAFFFFFFFFB4B4B4B4050505050000000000000000000000000000
+          000000000000000000005D5D5D5DFEFEFEFEFEFEFEFE68686868000000006767
+          6767FEFEFEFEFEFEFEFE67676767000000000000000000000000000000000000
+          00002D2D2D2DF4F4F4F4FFFFFFFFB4B4B4B41212121200000000000000000000
+          000000000000000000000000000067676767FEFEFEFEFEFEFEFE676767670000
+          000067676767FEFEFEFEFEFEFEFE676767670000000000000000000000000000
+          00000000000046464646F4F4F4F4FFFFFFFFEBEBEBEB80808080313131310B0B
+          0B0B0000000000000000000000000000000067676767FEFEFEFEFEFEFEFE6767
+          67670000000067676767FEFEFEFEFEFEFEFE6565656500000000000000000000
+          0000000000000000000029292929C4C4C4C4FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFF4F4F4F4BFBFBFBF53535353000000000000000067676767FEFEFEFEFEFE
+          FEFE6767676700000000A5A5A5A5FFFFFFFFEFEFEFEF00000000000000000000
+          000000000000000000000000000000000000B1B1B1B1FFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFF97979797010101010000000067676767FEFE
+          FEFEFEFEFEFEA5A5A5A5FEFEFEFEFEFEFEFE6565656500000000000000000000
+          000000000000000000000000000046464646FFFFFFFFF7F7F7F7727272721919
+          19191919191973737373F8F8F8F8FFFFFFFF6363636300000000000000006767
+          6767FEFEFEFEFFFFFFFFFEFEFEFE676767670000000000000000000000000000
+          0000000000000000000000000000B7B7B7B7FFFFFFFF72727272000000000000
+          0000000000000000000074747474FFFFFFFFD6D6D6D600000000000000000000
+          000065656565F1F1F1F165656565000000000000000000000000000000000000
+          0000000000000000000000000000EFEFEFEFFFFFFFFF19191919000000000000
+          0000000000000000000019191919FFFFFFFFFFFFFFFF0C0C0C0C000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000F5F5F5F5FFFFFFFF18181818000000000000
+          0000000000000000000019191919FFFFFFFFFFFFFFFF0D0D0D0D000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000C6C6C6C6FFFFFFFF70707070000000000000
+          0000000000000000000072727272FFFFFFFFDBDBDBDB00000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000000000005C5C5C5CFFFFFFFFF7F7F7F7707070701818
+          18181919191971717171F7F7F7F7FFFFFFFF6F6F6F6F00000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000010101019B9B9B9BFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFB1B1B1B10303030300000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000101010162626262D3D3D3D3FFFF
+          FFFFFFFFFFFFE0E0E0E075757575040404040000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000A0A
+          0A0A0E0E0E0E0000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000}
+        ParentFont = False
+        Visible = False
+        OnClick = btnConfirmClick
+        OnMouseEnter = btnConfirmMouseEnter
+        OnMouseLeave = btnConfirmMouseLeave
+        ExplicitLeft = 107
+        ExplicitTop = 8
+        ExplicitWidth = 23
+        ExplicitHeight = 22
       end
     end
     object Panel4: TPanel
@@ -542,7 +683,7 @@ object FrmLista: TFrmLista
         OnClick = btnSelectClick
         OnMouseEnter = btnSelectMouseEnter
         OnMouseLeave = btnSelectMouseLeave
-        ExplicitLeft = -1
+        ExplicitTop = -8
       end
     end
     object Panel6: TPanel
@@ -623,6 +764,191 @@ object FrmLista: TFrmLista
         ExplicitLeft = -1
         ExplicitHeight = 29
       end
+    end
+    object btnEditar: TButton
+      Left = 648
+      Top = 25
+      Width = 75
+      Height = 25
+      Caption = 'Editar'
+      TabOrder = 4
+      OnClick = btnEditarClick
+    end
+    object edtEndereco: TEdit
+      Left = 117
+      Top = 26
+      Width = 177
+      Height = 29
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 5
+      Visible = False
+    end
+    object edtEmail: TEdit
+      Left = 89
+      Top = 200
+      Width = 216
+      Height = 29
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 6
+      Visible = False
+    end
+    object edtTelefone: TEdit
+      Left = 110
+      Top = 112
+      Width = 121
+      Height = 29
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 7
+      Visible = False
+    end
+    object edtCidade: TEdit
+      Left = 117
+      Top = 68
+      Width = 132
+      Height = 29
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 8
+      TextHint = 'Cidade'
+      Visible = False
+    end
+    object edtCEP: TEdit
+      Left = 320
+      Top = 68
+      Width = 121
+      Height = 29
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 9
+      TextHint = 'CEP'
+      Visible = False
+    end
+    object BtnSalvar: TButton
+      Left = 648
+      Top = 56
+      Width = 75
+      Height = 25
+      Caption = 'Confirmado'
+      TabOrder = 10
+      OnClick = BtnSalvarClick
+    end
+    object EdtUF: TEdit
+      Left = 250
+      Top = 68
+      Width = 50
+      Height = 29
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 11
+      TextHint = 'UF'
+      Visible = False
+    end
+    object edtNum: TEdit
+      Left = 320
+      Top = 26
+      Width = 72
+      Height = 29
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 12
+      TextHint = 'Numero'
+      Visible = False
+    end
+    object edtBairro: TEdit
+      Left = 420
+      Top = 26
+      Width = 72
+      Height = 29
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 13
+      TextHint = 'Bairro'
+      Visible = False
+    end
+    object Button1: TButton
+      Left = 648
+      Top = 113
+      Width = 75
+      Height = 25
+      Caption = 'Button1'
+      TabOrder = 14
+      OnClick = Button1Click
+    end
+    object Button2: TButton
+      Left = 648
+      Top = 169
+      Width = 75
+      Height = 25
+      Caption = 'Button2'
+      TabOrder = 15
+      OnClick = Button2Click
     end
   end
 end

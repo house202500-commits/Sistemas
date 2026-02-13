@@ -1,0 +1,116 @@
+object DRelatorio: TDRelatorio
+  OldCreateOrder = False
+  Height = 186
+  Width = 286
+  object VW_VENDAS_MOVIMENTO: TfrxDBDataset
+    UserName = 'frxDBDataset1'
+    CloseDataSource = False
+    FieldAliases.Strings = (
+      'ID_VENDA=ID_VENDA'
+      'DATA_VENDA=DATA_VENDA'
+      'QUANTIDADE=QUANTIDADE'
+      'VALOR_UNITARIO=VALOR_UNITARIO'
+      'DESCONTO=DESCONTO'
+      'VALOR_TOTAL=VALOR_TOTAL'
+      'STATUS=STATUS'
+      'ID_CLIENTE=ID_CLIENTE'
+      'NOME_COMPLETO=NOME_COMPLETO'
+      'ID_PRODUTO=ID_PRODUTO'
+      'NOME_PRODUTO=NOME_PRODUTO'
+      'ID_CEP=ID_CEP'
+      'CEP=CEP'
+      'LOGRADOURO=LOGRADOURO'
+      'CIDADE=CIDADE'
+      'UF=UF')
+    DataSet = Dm.FDView
+    BCDToCurrency = False
+    Left = 80
+    Top = 64
+  end
+  object frxReport1: TfrxReport
+    Version = '6.3.1'
+    DataSet = VW_VENDAS_MOVIMENTO
+    DataSetName = 'frxDBDataset1'
+    DotMatrixReport = False
+    IniFile = '\Software\Fast Reports'
+    PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator, pbExportQuick, pbCopy, pbSelection]
+    PreviewOptions.Zoom = 1.000000000000000000
+    PrintOptions.Printer = 'Default'
+    PrintOptions.PrintOnSheet = 0
+    ReportOptions.CreateDate = 46066.405224965300000000
+    ReportOptions.LastChange = 46066.405224965300000000
+    ScriptLanguage = 'PascalScript'
+    ScriptText.Strings = (
+      'begin'
+      ''
+      'end.')
+    Left = 208
+    Top = 64
+    Datasets = <
+      item
+        DataSet = VW_VENDAS_MOVIMENTO
+        DataSetName = 'frxDBDataset1'
+      end>
+    Variables = <>
+    Style = <>
+    object Data: TfrxDataPage
+      Height = 1000.000000000000000000
+      Width = 1000.000000000000000000
+    end
+    object Page1: TfrxReportPage
+      PaperWidth = 210.000000000000000000
+      PaperHeight = 297.000000000000000000
+      PaperSize = 9
+      LeftMargin = 10.000000000000000000
+      RightMargin = 10.000000000000000000
+      TopMargin = 10.000000000000000000
+      BottomMargin = 10.000000000000000000
+      Frame.Typ = []
+      MirrorMode = []
+      object ReportTitle1: TfrxReportTitle
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 109.606370000000000000
+        Top = 18.897650000000000000
+        Width = 718.110700000000000000
+        object Memo1: TfrxMemoView
+          AllowVectorExport = True
+          Left = 3.779530000000000000
+          Top = 3.779530000000000000
+          Width = 154.960730000000000000
+          Height = 18.897650000000000000
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Bem vindo ao Relat'#243'rio!')
+        end
+        object frxDBDataset1NOME_COMPLETO: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 3.779530000000000000
+          Top = 30.236240000000000000
+          Width = 249.448980000000000000
+          Height = 18.897650000000000000
+          DataField = 'NOME_COMPLETO'
+          DataSet = VW_VENDAS_MOVIMENTO
+          DataSetName = 'frxDBDataset1'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDBDataset1."NOME_COMPLETO"]')
+        end
+        object frxDBDataset1CIDADE: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 3.779530000000000000
+          Top = 56.692950000000000000
+          Width = 400.630180000000000000
+          Height = 18.897650000000000000
+          DataSet = VW_VENDAS_MOVIMENTO
+          DataSetName = 'frxDBDataset1'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[frxDBDataset1."CIDADE"] / [frxDBDataset1."UF"]')
+        end
+      end
+    end
+  end
+end

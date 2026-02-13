@@ -5,7 +5,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  Vcl.Imaging.pngimage,FrClientVend,conexao;
+  Vcl.Imaging.pngimage,FrClientVend,conexao,FrmCadastro, System.UITypes,FireDAC.Comp.Client,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Stan.Param,FrmConsult;
+
 
 type
   TFrmLista = class(TForm)
@@ -33,10 +36,26 @@ type
     LbEmail: TLabel;
     LbCadastro: TLabel;
     LbStatus: TLabel;
-    LbNum: TLabel;
     LbUF: TLabel;
     LbBairro: TLabel;
     LbCEP: TLabel;
+    btnEditar: TButton;
+    edtEndereco: TEdit;
+    edtEmail: TEdit;
+    edtTelefone: TEdit;
+    edtCidade: TEdit;
+    edtCEP: TEdit;
+    BtnSalvar: TButton;
+    btnConfirm: TSpeedButton;
+    EdtUF: TEdit;
+    edtNum: TEdit;
+    edtBairro: TEdit;
+    Label6: TLabel;
+    Button1: TButton;
+    Button2: TButton;
+    LbNum: TLabel;
+    LbIDCliente: TLabel;
+    edtIdCep: TEdit;
     procedure btnFecClientMouseEnter(Sender: TObject);
     procedure btnFecClientMouseLeave(Sender: TObject);
     procedure btnNovoClienMouseEnter(Sender: TObject);
@@ -53,15 +72,27 @@ type
     procedure btnFecClientClick(Sender: TObject);
     procedure btnNovoClienClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
+    procedure BtnSalvarClick(Sender: TObject);
 
 
+    procedure btnConfirmClick(Sender: TObject);
 
-  private
+    procedure AtualizarEndereco;
+
+
+    procedure btnConfirmMouseEnter(Sender: TObject);
+    procedure btnConfirmMouseLeave(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);  private
     { Private declarations }
     FModoEdicao: Boolean;
     FIDClienteAtual: Integer;
     GlyphOriginal: TBitmap;
   //  procedure HabilitarControles(Ativo: Boolean);
+
+   // snapshot dos dados originais
+  FEnderecoOld, FCidadeOld, FCEPOld, FTelefoneOld, FEmailOld: string;
   public
     { Public declarations }
   end;
@@ -71,22 +102,83 @@ var
 
 implementation
  uses
- FrmVendas;
+ FrmVendas, FrmAdicConf;
 {$R *.dfm}
+
+procedure TFrmLista.AtualizarEndereco;
+begin
+     // Junta os textos das labels individuais no Label1
+  LbEnderco.Caption := LbEnderco.Caption + ', ' +
+                       LbNum.Caption   + ' - ' +
+                       LbBairro.Caption  ;
+
+
+  LbCidade.Caption :=  LbCidade.Caption + ' / ' +
+                       LbUF.Caption + '       ' +
+                       LbCEP.Caption ;
+end;
+
 
 procedure TFrmLista.btnEdtClienClick(Sender: TObject);
 begin
-  if FIDClienteAtual > 0 then
+  FIDClienteAtual := Dm.QryCadClientes.FieldByName('ID_CLIENTE').AsInteger;
+
+  if FIDClienteAtual <= 0 then
   begin
-    FModoEdicao := True;
-  //  HabilitarControles(True);
-    ShowMessage('📝 Modo edição ativado! Faça as alterações e clique em Salvar.');
-  end
-  else
-  begin
-    ShowMessage('Selecione um cliente para editar!');
+    ShowMessage('Selecione um cliente válido para editar!');
+    Exit;
   end;
+
+  // guarda valores originais
+  FEnderecoOld := edtEndereco.Text;
+  FCidadeOld   := edtCidade.Text;
+  FCEPOld      := edtCEP.Text;
+  FTelefoneOld := edtTelefone.Text;
+  FEmailOld    := edtEmail.Text;
+
+  // entra em modo edição
+  FModoEdicao := True;
+
+  // alterna visual
+  LbEnderco.Visible  := False;
+  LbCidade.Visible   := False;
+  LbCEP.Visible      := False;
+  LbTelefone.Visible := False;
+  LbEmail.Visible    := False;
+  LbUF.Visible       := False;
+  LbBairro.Visible   := False;
+  LbNum.Visible      := False;
+
+  edtEndereco.Visible := True;
+  edtCidade.Visible   := True;;
+  edtCEP.Visible      := True;
+  edtTelefone.Visible := True;
+  edtEmail.Visible    := True;
+  edtUF.Visible       := True;
+  edtBairro.Visible   := True;
+  edtNum.Visible      := True;
+
+
+
+  edtEndereco.ReadOnly := False;
+  edtCidade.ReadOnly   := False;
+  edtCEP.ReadOnly      := False;
+  edtTelefone.ReadOnly := False;
+  edtEmail.ReadOnly    := False;
+  edtUF.ReadOnly       := False;
+  edtBairro.ReadOnly   := False;
+  edtNum.ReadOnly      := False;
+
+  edtEndereco.SetFocus;
+
+  btnConfirm.Visible := true;
+  btnEdtClien.Visible := false;
+
+  Panel4.Enabled := False;
+  Panel5.Enabled := False;
+  Panel6.Enabled := False;
 end;
+
 
 procedure TFrmLista.btnEdtClienMouseEnter(Sender: TObject);
 begin
@@ -101,6 +193,8 @@ begin
 end;
 
 procedure TFrmLista.btnFecClientClick(Sender: TObject);
+
+{
 begin
   if FModoEdicao then
   begin
@@ -112,10 +206,13 @@ begin
     end;
   end
   else
+
+  }
+
   begin
     Close;
   end;
-end;
+
 
 procedure TFrmLista.btnFecClientMouseEnter(Sender: TObject);
 begin
@@ -133,6 +230,7 @@ procedure TFrmLista.btnNovoClienClick(Sender: TObject);
 begin
   FModoEdicao := False;
   FIDClienteAtual := 0;
+  FrmClientes.visible := not FrmClientes.visible;
 end;
 
 procedure TFrmLista.btnNovoClienMouseEnter(Sender: TObject);
@@ -153,15 +251,20 @@ begin
   FrmVenda.show;
 
   FrmVenda.Edit3.Text := LbClient.Caption ;
-  FrmVenda.LisBox.Items.Add(
-    'Endereço: ' + LbEnderco.Caption + ', ' +
-    LbNum.Caption + ' , ' +
-    LbBairro.Caption
-  );
+  FrmAdicionar.LbIDCliente.Caption := LbIDCliente.Caption;
+ // FrmVenda.LisBox.Items.Add(
 
-  FrmVenda.LisBox.Items.Add(
-    LbCidade.Caption + ' / ' + LbUF.Caption + '     ' + LbCEP.Caption
-  );
+ begin
+     // Junta os textos das labels individuais no Label1
+  FrmVenda.LbEnd.Caption := LbEnderco.Caption + ', ' +
+                       LbNum.Caption   + ' - ' +
+                       LbBairro.Caption  ;
+
+
+  FrmVenda.LbCid.Caption :=  LbCidade.Caption + ' / ' +
+                       LbUF.Caption + '       ' +
+                       LbCEP.Caption ;
+end;
 
   LbUF.AutoSize := True;
   LbCEP.AutoSize := True;
@@ -182,6 +285,278 @@ begin
   CarregarGlyphPNG;
 end;
 
+
+procedure TFrmLista.Button1Click(Sender: TObject);
+
+var
+  Endereco, Bairro, EnderecoCompleto: string;
+begin
+  // Simulando dados
+  Endereco := 'Rua dos Bobos, 00 - Centro';
+  Bairro := 'Jardim das Flores';
+
+  // Concatenar com validação
+  if (Trim(Endereco) <> '') and (Trim(Bairro) <> '') then
+    EnderecoCompleto := Trim(Endereco) + ', ' + Trim(Bairro)
+  else
+    EnderecoCompleto := Trim(Endereco) + Trim(Bairro);
+
+  // Atribuir ao Label
+  Label6.Caption := EnderecoCompleto;
+
+  // Opcional: Se a altura precisar ajustar dinamicamente
+  // após o WordWrap, você pode precisar calcular a altura da fonte:
+  // Label1.Height := Label1.Canvas.TextHeight(Label1.Caption) * 2;
+end;
+
+
+procedure TFrmLista.Button2Click(Sender: TObject);
+begin
+  AtualizarEndereco;
+end;
+
+procedure TFrmLista.BtnSalvarClick(Sender: TObject);
+var
+  Qry: TFDQuery;
+begin
+  if not FModoEdicao then
+    Exit;
+
+  // 🔹 se não mudou nada → volta tudo e sai
+  if (edtEndereco.Text = FEnderecoOld) and
+     (edtCidade.Text   = FCidadeOld) and
+     (edtCEP.Text      = FCEPOld) and
+     (edtTelefone.Text = FTelefoneOld) and
+     (edtEmail.Text    = FEmailOld) then
+  begin
+    edtEndereco.Text := FEnderecoOld;
+    edtCidade.Text   := FCidadeOld;
+    edtCEP.Text      := FCEPOld;
+    edtTelefone.Text := FTelefoneOld;
+    edtEmail.Text    := FEmailOld;
+
+    FModoEdicao := False;
+    Exit;
+  end;
+
+  // 🔹 valida campos
+  if (Trim(edtEndereco.Text) = '') or
+     (Trim(edtCidade.Text)   = '') or
+     (Trim(edtCEP.Text)      = '') or
+     (Trim(edtTelefone.Text) = '') or
+     (Trim(edtEmail.Text)    = '') then
+  begin
+    ShowMessage('Atenção: Todos os campos devem ser preenchidos!');
+    Exit;
+  end;
+
+  // 🔹 salva no banco
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := Dm.Fconexao;
+
+    Qry.SQL.Text :=
+      'UPDATE CLIENTES SET ' +
+      ' EMAIL = :EMAIL, ' +
+      ' TELEFONE = :TELEFONE, ' +
+      ' CEP = :CEP, ' +
+      ' ENDERECO = :ENDERECO, ' +
+      ' CIDADE = :CIDADE ' +
+      'WHERE ID_CLIENTE = :ID';
+
+    Qry.ParamByName('EMAIL').AsString    := edtEmail.Text;
+    Qry.ParamByName('TELEFONE').AsString := edtTelefone.Text;
+    Qry.ParamByName('CEP').AsString      := edtCEP.Text;
+    Qry.ParamByName('ENDERECO').AsString := edtEndereco.Text;
+    Qry.ParamByName('CIDADE').AsString   := edtCidade.Text;
+    Qry.ParamByName('ID').AsInteger      := FIDClienteAtual;
+
+    Qry.ExecSQL;
+
+    // atualiza visual
+    LbEnderco.Caption := edtEndereco.Text;
+    LbCidade.Caption := edtCidade.Text;
+    LbEmail.Caption := edtEmail.Text;
+    LbCEP.Caption := edtCEP.Text;
+    LbTelefone.Caption := edtTelefone.Text;
+
+    Dm.QryCadClientes.Refresh;
+
+    ShowMessage('Cadastro atualizado com sucesso!');
+  finally
+    Qry.Free;
+  end;
+
+  // sai do modo edição
+    edtEndereco.Visible := False;
+    edtCidade.Visible := False;
+    edtCEP.Visible := False;
+    edtTelefone.Visible := False;
+    edtEmail.Visible := False;
+
+
+    LbEnderco.Visible := True;
+    LbCidade.Visible  := True;
+    LbCEP.Visible := True;
+    LbTelefone.Visible := True;
+    LbEmail.Visible := True;
+
+end;
+
+
+procedure TFrmLista.btnConfirmClick(Sender: TObject);
+var
+  Qry: TFDQuery;
+begin
+
+  btnConfirm.Visible := False;
+
+  if not FModoEdicao then
+    Exit;
+
+  // 🔹 se não mudou nada → volta tudo e sai
+  if (edtEndereco.Text = FEnderecoOld) and
+     (edtCidade.Text   = FCidadeOld) and
+     (edtCEP.Text      = FCEPOld) and
+     (edtTelefone.Text = FTelefoneOld) and
+     (edtEmail.Text    = FEmailOld) then
+  begin
+    edtEndereco.Text := FEnderecoOld;
+    edtCidade.Text   := FCidadeOld;
+    edtCEP.Text      := FCEPOld;
+    edtTelefone.Text := FTelefoneOld;
+    edtEmail.Text    := FEmailOld;
+
+    FModoEdicao := False;
+    Exit;
+  end;
+
+  // 🔹 valida campos
+  if (Trim(edtEndereco.Text) = '') or
+     (Trim(edtCidade.Text)   = '') or
+     (Trim(edtCEP.Text)      = '') or
+     (Trim(edtTelefone.Text) = '') or
+     (Trim(edtEmail.Text)    = '') then
+  begin
+    ShowMessage('Atenção: Todos os campos devem ser preenchidos!');
+    Exit;
+  end;
+
+  // 🔹 salva no banco
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := Dm.Fconexao;
+
+    Qry.SQL.Text :=
+      'UPDATE CLIENTES SET ' +
+      ' EMAIL = :EMAIL, ' +
+      ' TELEFONE = :TELEFONE, ' +
+      ' CEP = :CEP, ' +
+      ' ENDERECO = :ENDERECO, ' +
+      ' CIDADE = :CIDADE ' +
+      'WHERE ID_CLIENTE = :ID';
+
+    Qry.ParamByName('EMAIL').AsString    := edtEmail.Text;
+    Qry.ParamByName('TELEFONE').AsString := edtTelefone.Text;
+    Qry.ParamByName('CEP').AsString      := edtCEP.Text;
+    Qry.ParamByName('ENDERECO').AsString := edtEndereco.Text;
+    Qry.ParamByName('CIDADE').AsString   := edtCidade.Text;
+    Qry.ParamByName('ID').AsInteger      := FIDClienteAtual;
+
+    Qry.ExecSQL;
+
+    // atualiza visual
+    LbEnderco.Caption := edtEndereco.Text;
+    LbCidade.Caption := edtCidade.Text;
+    LbEmail.Caption := edtEmail.Text;
+    LbCEP.Caption := edtCEP.Text;
+    LbTelefone.Caption := edtTelefone.Text;
+
+    Dm.QryCadClientes.Refresh;
+
+    ShowMessage('Cadastro atualizado com sucesso!');
+  finally
+    Qry.Free;
+  end;
+
+  // sai do modo edição
+    edtEndereco.Visible := False;
+    edtCidade.Visible := False;
+    edtCEP.Visible := False;
+    edtTelefone.Visible := False;
+    edtEmail.Visible := False;
+
+
+    LbEnderco.Visible := True;
+    LbCidade.Visible  := True;
+    LbCEP.Visible := True;
+    LbTelefone.Visible := True;
+    LbEmail.Visible := True;
+
+    Panel4.Enabled := True;
+    Panel5.Enabled := True;
+    Panel6.Enabled := True;
+
+    btnEdtClien.Visible := True;
+end;
+
+procedure TFrmLista.btnConfirmMouseEnter(Sender: TObject);
+begin
+  btnConfirm.Font.Color := $00908E4C;
+  btnConfirm.Glyph.Assign(nil);
+end;
+
+procedure TFrmLista.btnConfirmMouseLeave(Sender: TObject);
+begin
+   btnConfirm.Font.Color := clWhite;
+   CarregarGlyphPNG;
+end;
+
+procedure TFrmLista.btnEditarClick(Sender: TObject);
+begin
+  FIDClienteAtual := Dm.QryCadClientes.FieldByName('ID_CLIENTE').AsInteger;
+
+  if FIDClienteAtual <= 0 then
+  begin
+    ShowMessage('Selecione um cliente válido para editar!');
+    Exit;
+  end;
+
+  // guarda valores originais
+  FEnderecoOld := edtEndereco.Text;
+  FCidadeOld   := edtCidade.Text;
+  FCEPOld      := edtCEP.Text;
+  FTelefoneOld := edtTelefone.Text;
+  FEmailOld    := edtEmail.Text;
+
+  // entra em modo edição
+  FModoEdicao := True;
+
+  // alterna visual
+  LbEnderco.Visible   := False;
+  LbCidade.Visible   := False;
+  LbCEP.Visible   := False;
+  LbTelefone.Visible   := False;
+  LbEmail.Visible   := False;
+
+  edtEndereco.Visible := True;
+  edtCidade.Visible := True;;
+  edtCEP.Visible := True;
+  edtTelefone.Visible := True;
+  edtEmail.Visible := True;
+
+
+
+  edtEndereco.ReadOnly := False;
+  edtCidade.ReadOnly   := False;
+  edtCEP.ReadOnly      := False;
+  edtTelefone.ReadOnly := False;
+  edtEmail.ReadOnly    := False;
+
+  edtEndereco.SetFocus;
+end;
+
+
 procedure TFrmLista.CarregarGlyphPNG;
 var
   Png: TPngImage;
@@ -194,6 +569,9 @@ begin
     Png.LoadFromFile('C:\Users\User\Downloads\img\editar.png');
     btnEdtClien.Glyph.Assign(Png);
 
+    Png.LoadFromFile('C:\Users\User\Downloads\img\editar.png');
+    btnConfirm.Glyph.Assign(Png);
+
     Png.LoadFromFile('C:\Users\User\Downloads\img\novo-usuario.png');
     btnNovoClien.Glyph.Assign(Png);
 
@@ -204,6 +582,7 @@ begin
     Png.Free;
   end;
 end;
+
 
 procedure TFrmLista.FormCreate(Sender: TObject);
 begin
@@ -229,4 +608,7 @@ begin
     LbStatus.Caption := 'Desconhecido';
 end;
 
+
 end.
+
+

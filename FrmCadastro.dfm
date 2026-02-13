@@ -2,9 +2,9 @@ object FrmClientes: TFrmClientes
   Left = 0
   Top = 0
   Width = 1300
-  Height = 884
+  Height = 733
   HorzScrollBar.Range = 1000
-  VertScrollBar.Position = 119
+  VertScrollBar.Position = 306
   VertScrollBar.Range = 1000
   Align = alClient
   Caption = 'FrmClientes'
@@ -23,7 +23,7 @@ object FrmClientes: TFrmClientes
   object Panel1: TPanel
     AlignWithMargins = True
     Left = 10
-    Top = -109
+    Top = -296
     Width = 1247
     Height = 980
     Margins.Left = 10
@@ -37,9 +37,12 @@ object FrmClientes: TFrmClientes
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
+    DesignSize = (
+      1247
+      980)
     object Label1: TLabel
       Left = 30
-      Top = 369
+      Top = 325
       Width = 47
       Height = 21
       Caption = 'E-mail'
@@ -52,7 +55,7 @@ object FrmClientes: TFrmClientes
     end
     object Label2: TLabel
       Left = 30
-      Top = 466
+      Top = 376
       Width = 64
       Height = 21
       Caption = 'Telefone'
@@ -63,22 +66,9 @@ object FrmClientes: TFrmClientes
       Font.Style = []
       ParentFont = False
     end
-    object Label3: TLabel
+    object LbPrincipal: TLabel
       Left = 30
-      Top = 247
-      Width = 149
-      Height = 21
-      Caption = 'Data de nascimento'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clMaroon
-      Font.Height = -17
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
-    object Label5: TLabel
-      Left = 30
-      Top = 201
+      Top = 209
       Width = 118
       Height = 21
       Caption = 'Nome Completo'
@@ -91,7 +81,7 @@ object FrmClientes: TFrmClientes
     end
     object Label6: TLabel
       Left = 336
-      Top = 774
+      Top = 682
       Width = 20
       Height = 21
       Caption = 'UF'
@@ -102,12 +92,12 @@ object FrmClientes: TFrmClientes
       Font.Style = []
       ParentFont = False
     end
-    object Label7: TLabel
+    object LCPPJ: TLabel
       Left = 30
       Top = 155
-      Width = 72
+      Width = 28
       Height = 21
-      Caption = 'CPF/CNPJ'
+      Caption = 'CPF'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
@@ -143,7 +133,7 @@ object FrmClientes: TFrmClientes
     end
     object Label9: TLabel
       Left = 25
-      Top = 321
+      Top = 276
       Width = 78
       Height = 24
       Caption = 'Contato'
@@ -156,7 +146,7 @@ object FrmClientes: TFrmClientes
     end
     object Label10: TLabel
       Left = 353
-      Top = 369
+      Top = 325
       Width = 124
       Height = 21
       Caption = 'Confirmar E-mail'
@@ -169,7 +159,7 @@ object FrmClientes: TFrmClientes
     end
     object Label11: TLabel
       Left = 24
-      Top = 537
+      Top = 448
       Width = 94
       Height = 24
       Caption = 'Endere'#231'o'
@@ -182,7 +172,7 @@ object FrmClientes: TFrmClientes
     end
     object Label12: TLabel
       Left = 30
-      Top = 587
+      Top = 490
       Width = 29
       Height = 21
       Caption = 'CEP'
@@ -195,7 +185,7 @@ object FrmClientes: TFrmClientes
     end
     object Label13: TLabel
       Left = 30
-      Top = 633
+      Top = 540
       Width = 69
       Height = 21
       Caption = 'Endere'#231'o'
@@ -208,12 +198,12 @@ object FrmClientes: TFrmClientes
     end
     object Label14: TLabel
       Left = 30
-      Top = 680
+      Top = 587
       Width = 58
       Height = 21
       Caption = 'N'#250'mero'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clMaroon
+      Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
       Font.Style = []
@@ -221,12 +211,12 @@ object FrmClientes: TFrmClientes
     end
     object Label15: TLabel
       Left = 250
-      Top = 680
+      Top = 587
       Width = 102
       Height = 21
       Caption = 'Complemento'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clMaroon
+      Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
       Font.Style = []
@@ -234,12 +224,12 @@ object FrmClientes: TFrmClientes
     end
     object Label16: TLabel
       Left = 30
-      Top = 727
+      Top = 639
       Width = 44
       Height = 21
       Caption = 'Bairro'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clMaroon
+      Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
       Font.Style = []
@@ -247,7 +237,7 @@ object FrmClientes: TFrmClientes
     end
     object Label17: TLabel
       Left = 30
-      Top = 774
+      Top = 682
       Width = 50
       Height = 21
       Caption = 'Cidade'
@@ -258,37 +248,14 @@ object FrmClientes: TFrmClientes
       Font.Style = []
       ParentFont = False
     end
-    object Label18: TLabel
-      Left = 30
-      Top = 417
-      Width = 45
-      Height = 21
-      Caption = 'Senha'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clMaroon
-      Font.Height = -17
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
-    object Label19: TLabel
-      Left = 354
-      Top = 417
-      Width = 122
-      Height = 21
-      Caption = 'Confirmar Senha'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clMaroon
-      Font.Height = -17
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
     object Label20: TLabel
-      Left = 295
-      Top = 151
+      AlignWithMargins = True
+      Left = 269
+      Top = 155
       Width = 6
       Height = 25
+      Alignment = taCenter
+      Anchors = [akLeft, akTop, akRight, akBottom]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = 2924618
       Font.Height = -21
@@ -297,8 +264,8 @@ object FrmClientes: TFrmClientes
       ParentFont = False
     end
     object Label22: TLabel
-      Left = 624
-      Top = 632
+      Left = 564
+      Top = 688
       Width = 37
       Height = 13
       Caption = 'Label22'
@@ -316,53 +283,26 @@ object FrmClientes: TFrmClientes
       Font.Style = []
       ParentFont = False
     end
-    object Label24: TLabel
-      Left = 319
-      Top = 247
-      Width = 174
+    object Label5: TLabel
+      Left = 564
+      Top = 734
+      Width = 48
       Height = 21
-      Caption = 'Obs: vou remover este '
+      Caption = 'Label5'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clMaroon
+      Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
     end
-    object Label25: TLabel
-      Left = 657
-      Top = 416
-      Width = 174
+    object LBUF: TLabel
+      Left = 455
+      Top = 682
+      Width = 5
       Height = 21
-      Caption = 'Obs: vou remover este '
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clMaroon
-      Font.Height = -17
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
-    object Label26: TLabel
-      Left = 438
-      Top = 680
-      Width = 174
-      Height = 21
-      Caption = 'Obs: vou remover este '
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clMaroon
-      Font.Height = -17
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
-    object Label27: TLabel
-      Left = 308
-      Top = 727
-      Width = 174
-      Height = 21
-      Caption = 'Obs: vou remover este '
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clMaroon
+      Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
       Font.Style = []
@@ -371,7 +311,7 @@ object FrmClientes: TFrmClientes
     object Edit1: TEdit
       AlignWithMargins = True
       Left = 111
-      Top = 457
+      Top = 375
       Width = 188
       Height = 32
       Margins.Left = 10
@@ -386,10 +326,10 @@ object FrmClientes: TFrmClientes
       ParentFont = False
       TabOrder = 0
     end
-    object Edit2: TEdit
+    object EditCEP: TEdit
       AlignWithMargins = True
       Left = 111
-      Top = 581
+      Top = 491
       Width = 110
       Height = 32
       Margins.Left = 10
@@ -403,13 +343,14 @@ object FrmClientes: TFrmClientes
       Font.Style = []
       ParentFont = False
       TabOrder = 1
-      OnClick = Edit2Click
+      OnClick = EditCEPClick
     end
-    object RadioButton1: TRadioButton
-      Left = 35
-      Top = 51
+    object RadioCPF: TRadioButton
+      Left = 30
+      Top = 47
       Width = 175
       Height = 17
+      Cursor = crHandPoint
       Caption = 'Pessoa Fisica (CPF)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -418,12 +359,14 @@ object FrmClientes: TFrmClientes
       Font.Style = []
       ParentFont = False
       TabOrder = 2
+      OnClick = RadioCPFClick
     end
-    object RadioButton2: TRadioButton
-      Left = 235
-      Top = 54
+    object RadioCNPJ: TRadioButton
+      Left = 228
+      Top = 50
       Width = 197
       Height = 17
+      Cursor = crHandPoint
       Caption = 'Pessoa Jur'#237'dica (CNPJ)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -432,11 +375,12 @@ object FrmClientes: TFrmClientes
       Font.Style = []
       ParentFont = False
       TabOrder = 3
+      OnClick = RadioCNPJClick
     end
     object Edit3: TEdit
       AlignWithMargins = True
-      Left = 154
-      Top = 196
+      Left = 161
+      Top = 208
       Width = 342
       Height = 32
       Margins.Left = 10
@@ -450,11 +394,12 @@ object FrmClientes: TFrmClientes
       Font.Style = []
       ParentFont = False
       TabOrder = 4
+      OnKeyPress = Edit3KeyPress
     end
     object Edit4: TEdit
       AlignWithMargins = True
       Left = 490
-      Top = 366
+      Top = 324
       Width = 199
       Height = 32
       Margins.Left = 10
@@ -469,11 +414,24 @@ object FrmClientes: TFrmClientes
       ParentFont = False
       TabOrder = 5
     end
-    object EdtCPF: TEdit
+    object CmbUF: TComboBox
+      Left = 365
+      Top = 681
+      Width = 60
+      Height = 29
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 6
+    end
+    object EditEndereco: TEdit
       AlignWithMargins = True
-      Left = 115
-      Top = 149
-      Width = 174
+      Left = 112
+      Top = 538
+      Width = 391
       Height = 32
       Margins.Left = 10
       Margins.Top = 10
@@ -485,27 +443,13 @@ object FrmClientes: TFrmClientes
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 6
-      OnChange = EdtCPFChange
-    end
-    object ComboBox1: TComboBox
-      Left = 360
-      Top = 769
-      Width = 60
-      Height = 29
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -17
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
       TabOrder = 7
     end
-    object Edit8: TEdit
+    object EditNum: TEdit
       AlignWithMargins = True
       Left = 111
-      Top = 628
-      Width = 391
+      Top = 586
+      Width = 65
       Height = 32
       Margins.Left = 10
       Margins.Top = 10
@@ -519,10 +463,10 @@ object FrmClientes: TFrmClientes
       ParentFont = False
       TabOrder = 8
     end
-    object Edit9: TEdit
+    object Edit5: TEdit
       AlignWithMargins = True
-      Left = 111
-      Top = 675
+      Left = 360
+      Top = 586
       Width = 65
       Height = 32
       Margins.Left = 10
@@ -537,11 +481,11 @@ object FrmClientes: TFrmClientes
       ParentFont = False
       TabOrder = 9
     end
-    object Edit5: TEdit
+    object EditBairro: TEdit
       AlignWithMargins = True
-      Left = 360
-      Top = 675
-      Width = 65
+      Left = 111
+      Top = 634
+      Width = 184
       Height = 32
       Margins.Left = 10
       Margins.Top = 10
@@ -555,10 +499,10 @@ object FrmClientes: TFrmClientes
       ParentFont = False
       TabOrder = 10
     end
-    object Edit10: TEdit
+    object EditCidade: TEdit
       AlignWithMargins = True
       Left = 111
-      Top = 722
+      Top = 681
       Width = 184
       Height = 32
       Margins.Left = 10
@@ -573,11 +517,11 @@ object FrmClientes: TFrmClientes
       ParentFont = False
       TabOrder = 11
     end
-    object Edit11: TEdit
+    object Edit7: TEdit
       AlignWithMargins = True
       Left = 111
-      Top = 769
-      Width = 184
+      Top = 324
+      Width = 202
       Height = 32
       Margins.Left = 10
       Margins.Top = 10
@@ -591,150 +535,102 @@ object FrmClientes: TFrmClientes
       ParentFont = False
       TabOrder = 12
     end
-    object Edit12: TEdit
-      AlignWithMargins = True
-      Left = 111
-      Top = 410
-      Width = 160
-      Height = 32
-      Margins.Left = 10
-      Margins.Top = 10
-      Margins.Right = 10
-      Margins.Bottom = 5
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -20
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 13
-    end
-    object Edit13: TEdit
-      AlignWithMargins = True
-      Left = 484
-      Top = 413
-      Width = 160
-      Height = 32
-      Margins.Left = 10
-      Margins.Top = 10
-      Margins.Right = 10
-      Margins.Bottom = 5
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -20
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 14
-    end
-    object Edit7: TEdit
-      AlignWithMargins = True
-      Left = 111
-      Top = 363
-      Width = 202
-      Height = 32
-      Margins.Left = 10
-      Margins.Top = 10
-      Margins.Right = 10
-      Margins.Bottom = 5
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -20
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 15
-    end
     object Button1: TButton
-      Left = 640
-      Top = 824
+      Left = 624
+      Top = 683
       Width = 147
       Height = 25
       Caption = 'Teste - CadProdutos'
-      TabOrder = 16
+      TabOrder = 13
       OnClick = Button1Click
     end
     object Button2: TButton
-      Left = 25
-      Top = 880
-      Width = 75
-      Height = 25
-      Caption = 'Button2'
-      TabOrder = 17
+      Left = 111
+      Top = 776
+      Width = 100
+      Height = 27
+      Caption = 'Enviar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 14
       OnClick = Button2Click
     end
     object edtIDCliente: TEdit
-      Left = 640
-      Top = 864
+      Left = 624
+      Top = 737
       Width = 121
       Height = 21
-      TabOrder = 18
+      TabOrder = 15
       Text = 'edtIDCliente'
     end
     object Button3: TButton
-      Left = 146
-      Top = 880
-      Width = 75
-      Height = 25
-      Caption = 'Button3'
-      TabOrder = 19
+      Left = 244
+      Top = 776
+      Width = 100
+      Height = 27
+      Caption = 'Limpar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 16
       OnClick = Button3Click
     end
-    object Button4: TButton
-      Left = 295
-      Top = 880
-      Width = 75
-      Height = 25
-      Caption = 'Button4'
-      TabOrder = 20
-      OnClick = Button4Click
+    object btnCanc: TButton
+      Left = 377
+      Top = 776
+      Width = 100
+      Height = 27
+      Caption = 'Cancelar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 17
+      OnClick = btnCancClick
     end
-    object DateTimePicker1: TDateTimePicker
-      Left = 187
-      Top = 245
-      Width = 126
+    object Edit6: TEdit
+      AlignWithMargins = True
+      Left = 531
+      Top = 154
+      Width = 62
+      Height = 32
+      Margins.Left = 10
+      Margins.Top = 10
+      Margins.Right = 10
+      Margins.Bottom = 5
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 18
+      OnChange = MaskEdtChange
+      OnMouseEnter = Edit6MouseEnter
+    end
+    object MaskEdt: TMaskEdit
+      Left = 161
+      Top = 157
+      Width = 155
       Height = 29
-      Date = 46043.000000000000000000
-      Time = 0.697518368055170900
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 21
-    end
-    object Edit6: TEdit
-      AlignWithMargins = True
-      Left = 531
-      Top = 149
-      Width = 94
-      Height = 32
-      Margins.Left = 10
-      Margins.Top = 10
-      Margins.Right = 10
-      Margins.Bottom = 5
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -20
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 22
-      OnChange = EdtCPFChange
-    end
-    object DBGrid1: TDBGrid
-      Left = 467
-      Top = 891
-      Width = 320
-      Height = 55
-      DataSource = Dm.DSCadClientes
-      TabOrder = 23
-      TitleFont.Charset = DEFAULT_CHARSET
-      TitleFont.Color = clWindowText
-      TitleFont.Height = -11
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Style = []
+      TabOrder = 19
+      Text = ''
+      OnChange = MaskEdit1Change
     end
   end
 end

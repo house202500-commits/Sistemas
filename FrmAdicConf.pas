@@ -4,7 +4,15 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+    conexao,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.FB, // Para FireBird
+  FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client,FrmConsult, Vcl.DBCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids,FrmListClient;
 
 type
   TFrmAdicionar = class(TForm)
@@ -23,13 +31,33 @@ type
     Panel1: TPanel;
     btnConfirma: TSpeedButton;
     btnCancelar: TSpeedButton;
+    CbQuant: TComboBox;
+    dsItens: TDataSource;
+    mtItens: TFDMemTable;
+    Label5: TLabel;
+    LbCod: TLabel;
+    LbIDProduto: TLabel;
+    edtIdCep1: TEdit;
+    LbIDCliente: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
     procedure btnConfirmaClick(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure btnCancelarMouseEnter(Sender: TObject);
     procedure btnCancelarMouseLeave(Sender: TObject);
     procedure btnConfirmaMouseEnter(Sender: TObject);
     procedure btnConfirmaMouseLeave(Sender: TObject);
+    procedure CbProdutoClick(Sender: TObject);
+    procedure DBLookupComboBox1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure CbProdutoChange(Sender: TObject);
+    procedure CbQuantChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+
+    procedure SalvarBancoVenda;
+
   private
+    procedure CalcularTotal;
     { Private declarations }
   public
     { Public declarations }
@@ -43,6 +71,19 @@ uses
 FrmVendas;
 
 {$R *.dfm}
+
+procedure TFrmAdicionar.CalcularTotal;
+var
+  Qtd: Integer;
+  Valor: Double;
+begin
+  if not TryStrToInt(CbQuant.Text, Qtd) then Qtd := 0;
+  if not TryStrToFloat(StringReplace(LbVlUnit.caption, ',', '.', [rfReplaceAll]), Valor) then
+    Valor := 0;
+
+  LbTotItem.caption := FormatFloat('0.00', Qtd * Valor);
+end;
+
 
 procedure TFrmAdicionar.btnCancelarClick(Sender: TObject);
 begin
@@ -60,8 +101,42 @@ begin
 end;
 
 procedure TFrmAdicionar.btnConfirmaClick(Sender: TObject);
+var
+  Quant: Integer;
+  ValUnit, Desc, TotItem, SomaTotal: Double;
+  Descricao: string;
 begin
-    FrmAdicionar.visible := not FrmAdicionar.visible;
+  Quant := StrToIntDef(CbQuant.Text, 1);
+  Descricao := CbProduto.Text;
+  ValUnit := StrToFloatDef(LbVlUnit.Caption, 0);
+  Desc := StrToFloatDef(StringReplace(LbDesc.Caption, '%', '', [rfReplaceAll]), 0) / 100;
+
+  TotItem := Quant * ValUnit * (1 - Desc);
+
+mtItens.Append;
+mtItens.FieldByName('ID_PRODUTO').AsInteger := StrToIntDef(LbIDProduto.Caption, 0);
+mtItens.FieldByName('CODIGO').AsInteger := StrToIntDef(LbCod.Caption, 0);
+mtItens.FieldByName('DESCRICAO').AsString := Descricao;
+mtItens.FieldByName('QUANTIDADE').AsInteger := Quant;
+mtItens.FieldByName('VALOR_UNIT').AsFloat := ValUnit;
+mtItens.FieldByName('DESCONTO').AsFloat := Desc * 100;
+mtItens.FieldByName('TOTAL_ITEM').AsFloat := TotItem;
+mtItens.Post;
+
+  SomaTotal := 0;
+  mtItens.First;
+  while not mtItens.Eof do
+  begin
+    SomaTotal := SomaTotal + mtItens.FieldByName('TOTAL_ITEM').AsFloat;
+    mtItens.Next;
+  end;
+
+  FrmVenda.LbValorTl.Caption := FormatFloat('0.00', SomaTotal);
+  FrmVenda.DBGrid1.DataSource := dsItens;
+
+  SalvarBancoVenda;
+
+  FrmAdicionar.Visible := False;
 end;
 
 procedure TFrmAdicionar.btnConfirmaMouseEnter(Sender: TObject);
@@ -73,5 +148,231 @@ procedure TFrmAdicionar.btnConfirmaMouseLeave(Sender: TObject);
 begin
    btnConfirma.Font.Color := clWhite;
 end;
+
+procedure TFrmAdicionar.CbProdutoChange(Sender: TObject);
+var
+  Qry: TFDQuery;
+  IdProduto: Integer;
+begin
+  if CbProduto.ItemIndex < 0 then Exit;
+
+  IdProduto := Integer(CbProduto.Items.Objects[CbProduto.ItemIndex]);
+
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := Dm.Fconexao;
+    Qry.SQL.Text :=
+      'SELECT ID_PRODUTO, VALOR_UNITARIO, CODIGO ' +
+      'FROM PRODUTOS ' +
+      'WHERE ID_PRODUTO = :ID';
+
+    Qry.ParamByName('ID').AsInteger := IdProduto;
+    Qry.Open;
+
+    if not Qry.IsEmpty then
+    begin
+
+      LbVlUnit.Caption :=
+        FormatFloat('0.00', Qry.FieldByName('VALOR_UNITARIO').AsFloat);
+
+      LbCod.Caption :=
+        Qry.FieldByName('CODIGO').AsString;
+
+    LbIDProduto.Caption := Qry.FieldByName('ID_PRODUTO').AsString;
+
+    end;
+
+  finally
+    Qry.Free;
+  end;
+
+  CalcularTotal;
+end;
+
+procedure TFrmAdicionar.CbProdutoClick(Sender: TObject);
+var
+  QrySelect2: TFDQuery;
+begin
+ // CbProduto.Items.Clear;
+
+  QrySelect2 := TFDQuery.Create(nil);
+  try
+    QrySelect2.Connection := Dm.Fconexao;
+    QrySelect2.SQL.Text :=
+      'SELECT ID_PRODUTO, DESCRICAO ' +
+      'FROM PRODUTOS ' +
+      'WHERE STATUS = ''A'' ' +
+      'ORDER BY DATA_CADASTRO DESC';
+    QrySelect2.Open;
+
+    while not QrySelect2.Eof do
+    begin
+
+      CbProduto.Items.AddObject(
+        QrySelect2.FieldByName('DESCRICAO').AsString,
+        TObject(QrySelect2.FieldByName('ID_PRODUTO').AsInteger)
+      );
+
+      QrySelect2.Next;
+    end;
+
+  finally
+    QrySelect2.Free;
+  end;
+end;
+
+
+procedure TFrmAdicionar.CbQuantChange(Sender: TObject);
+var
+  Quantidade: Integer;
+  ValorUnit: Double;
+  Total: Double;
+begin
+
+  if not TryStrToInt(CbQuant.Text, Quantidade) then
+    Quantidade := 0;
+
+  if not TryStrToFloat(LbVlUnit.Caption, ValorUnit) then
+    ValorUnit := 0;
+
+  Total := Quantidade * ValorUnit;
+
+  LbTotItem.Caption := FormatFloat('0.00', Total);
+end;
+
+
+procedure TFrmAdicionar.DBLookupComboBox1Click(Sender: TObject);
+var
+  QrySelect2: TFDQuery;
+begin
+  QrySelect2 := TFDQuery.Create(nil);
+  try
+    QrySelect2.Connection := Dm.Fconexao;
+    QrySelect2.SQL.Text :=
+      'SELECT ID_PRODUTO, DESCRICAO ' +
+      'FROM PRODUTOS ' +
+      'WHERE STATUS = ''A''';
+    QrySelect2.Open;
+
+    Dm.DtCadProd.DataSet := QrySelect2;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar produtos: ' + E.Message);
+  end;
+end;
+
+procedure TFrmAdicionar.FormCreate(Sender: TObject);
+begin
+  mtItens.Close;
+  mtItens.FieldDefs.Clear;
+
+  mtItens.FieldDefs.Add('ID_PRODUTO', ftInteger);
+  mtItens.FieldDefs.Add('CODIGO', ftInteger);
+  mtItens.FieldDefs.Add('DESCRICAO', ftString, 60);
+  mtItens.FieldDefs.Add('QUANTIDADE', ftInteger);
+  mtItens.FieldDefs.Add('VALOR_UNIT', ftFloat);
+  mtItens.FieldDefs.Add('DESCONTO', ftFloat);
+  mtItens.FieldDefs.Add('TOTAL_ITEM', ftFloat);
+
+  FrmVenda.DBGrid1.Columns[0].Alignment := taLeftJustify;
+
+  mtItens.CreateDataSet;
+  mtItens.Open;
+
+  //mtItens.FieldByName('VALOR_UNIT').DisplayFormat := 'R$ #,##0.00';
+  //mtItens.FieldByName('TOTAL_ITEM').DisplayFormat := 'R$ #,##0.00';
+
+  dsItens.DataSet := mtItens;
+  FrmVenda.DBGrid1.DataSource := dsItens;
+end;
+
+
+procedure TFrmAdicionar.FormShow(Sender: TObject);
+var
+  QrySelect2: TFDQuery;
+begin
+  CbProduto.Clear;
+
+  QrySelect2 := TFDQuery.Create(nil);
+  try
+    QrySelect2.Connection := Dm.Fconexao;
+    QrySelect2.SQL.Text :=
+      'SELECT ID_PRODUTO, DESCRICAO ' +
+      'FROM PRODUTOS ' +
+      'WHERE STATUS = ''A'' ' +
+      'ORDER BY DESCRICAO';
+    QrySelect2.Open;
+
+    while not QrySelect2.Eof do
+    begin
+
+      CbProduto.Items.AddObject(
+        QrySelect2.FieldByName('DESCRICAO').AsString,
+        TObject(QrySelect2.FieldByName('ID_PRODUTO').AsInteger)
+      );
+      QrySelect2.Next;
+    end;
+
+  finally
+    QrySelect2.Free;
+  end;
+end;
+
+procedure TFrmAdicionar.SalvarBancoVenda;
+var
+  SQLInsert: string;
+begin
+
+  SQLInsert := 'INSERT INTO COMPRAS ' +
+               '(ID_CLIENTE, ID_PRODUTO, ID_CEP, QUANTIDADE, VALOR_UNITARIO, VALOR_TOTAL) ' +
+               'VALUES (:ID_CLIENTE, :ID_PRODUTO, :ID_CEP, :QUANTIDADE, :VALOR_UNITARIO, :VALOR_TOTAL)';
+
+   SQLInsert := 'INSERT INTO VENDAS ' +
+               '(ID_CLIENTE, ID_PRODUTO, ID_CEP, QUANTIDADE, VALOR_UNITARIO, VALOR_TOTAL) ' +
+               'VALUES (:ID_CLIENTE, :ID_PRODUTO, :ID_CEP, :QUANTIDADE, :VALOR_UNITARIO, :VALOR_TOTAL)';
+
+
+  with Dm.FdVendasProd do
+  begin
+    SQL.Clear;
+    SQL.Add(SQLInsert);
+
+    if LbIDCliente.Caption = '' then
+    begin
+      ShowMessage('Informe o ID do Cliente.');
+      Exit;
+    end;
+
+    if LbIDProduto.Caption = '' then
+    begin
+      ShowMessage('Informe o ID do Produto.');
+      Exit;
+    end;
+
+    if edtIdCep1.Text = '' then
+    begin
+      ShowMessage('Informe o CEP.');
+      Exit;
+    end;
+
+    if CbQuant.Text = '' then
+    begin
+      ShowMessage('Informe a quantidade.');
+      Exit;
+    end;
+
+    ParamByName('ID_CLIENTE').AsInteger   := StrToInt(LbIDCliente.caption);
+    ParamByName('ID_PRODUTO').AsInteger   := StrToInt(LbIDProduto.Caption);
+    ParamByName('ID_CEP').AsInteger       := StrToInt(edtIdCep1.Text);
+    ParamByName('QUANTIDADE').AsInteger   := StrToInt(CbQuant.Text);
+    ParamByName('VALOR_UNITARIO').AsFloat := StrToFloat(LbVlUnit.Caption);
+    ParamByName('VALOR_TOTAL').AsFloat    := StrToFloat(LbTotItem.Caption);
+
+    ExecSQL;
+  end;
+
+  ShowMessage('Venda registrada com sucesso!');
+end;
+
 
 end.

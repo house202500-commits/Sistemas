@@ -13,7 +13,8 @@ uses
   FrClientVend in 'FrClientVend.pas' {FrmClientVenda},
   FrmVendTela in 'FrmVendTela.pas' {FrmTelaVendas},
   FrmCompTela in 'FrmCompTela.pas' {FrmTelaCompras},
-  FrmPrincipal in 'FrmPrincipal.pas' {Principal};
+  FrmPrincipal in 'FrmPrincipal.pas' {Principal},
+  URelatorio in 'Relatorio\URelatorio.pas' {DRelatorio: TDataModule};
 
 {$R *.res}
 
@@ -32,5 +33,6 @@ begin
   Application.CreateForm(TFrmClientVenda, FrmClientVenda);
   Application.CreateForm(TFrmTelaVendas, FrmTelaVendas);
   Application.CreateForm(TFrmTelaCompras, FrmTelaCompras);
+  Application.CreateForm(TDRelatorio, DRelatorio);
   Application.Run;
 end.

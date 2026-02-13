@@ -45,41 +45,41 @@ object FCadProdutos: TFCadProdutos
     end
     object Label5: TLabel
       Left = 22
-      Top = 129
-      Width = 135
+      Top = 88
+      Width = 161
       Height = 21
       Caption = 'C'#243'digo do produto'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
-      Font.Style = []
+      Font.Style = [fsBold]
       ParentFont = False
     end
     object Label1: TLabel
       Left = 22
-      Top = 201
-      Width = 73
+      Top = 160
+      Width = 83
       Height = 21
       Caption = 'Descri'#231#227'o'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
-      Font.Style = []
+      Font.Style = [fsBold]
       ParentFont = False
     end
     object Label2: TLabel
       Left = 24
-      Top = 276
-      Width = 99
+      Top = 236
+      Width = 116
       Height = 21
       Caption = 'Valor unit'#225'rio'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
-      Font.Style = []
+      Font.Style = [fsBold]
       ParentFont = False
     end
     object Image1: TImage
@@ -90,14 +90,14 @@ object FCadProdutos: TFCadProdutos
     end
     object SpeedButton1: TSpeedButton
       Left = 184
-      Top = 405
+      Top = 365
       Width = 129
       Height = 22
       Flat = True
     end
     object Label3: TLabel
       Left = 228
-      Top = 407
+      Top = 367
       Width = 5
       Height = 19
       Font.Charset = DEFAULT_CHARSET
@@ -109,13 +109,16 @@ object FCadProdutos: TFCadProdutos
     end
     object Image2: TImage
       Left = 458
-      Top = 475
+      Top = 440
       Width = 121
       Height = 103
+      Visible = False
+      OnMouseEnter = Image2MouseEnter
+      OnMouseLeave = Image2MouseLeave
     end
     object Label4: TLabel
       Left = 464
-      Top = 453
+      Top = 418
       Width = 4
       Height = 16
       Font.Charset = DEFAULT_CHARSET
@@ -125,24 +128,11 @@ object FCadProdutos: TFCadProdutos
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label6: TLabel
-      Left = 301
-      Top = 334
-      Width = 79
-      Height = 24
-      Caption = 'Testado'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clRed
-      Font.Height = -20
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
     object edtCod: TEdit
       AlignWithMargins = True
       Left = 22
-      Top = 153
-      Width = 174
+      Top = 113
+      Width = 163
       Height = 29
       Margins.Left = 10
       Margins.Top = 10
@@ -156,13 +146,14 @@ object FCadProdutos: TFCadProdutos
       ParentFont = False
       TabOrder = 0
       TextHint = 'Digite o c'#243'digo '#250'nico'
+      OnChange = edtCodChange
       OnMouseEnter = edtCodMouseEnter
     end
     object EdtValor: TEdit
       AlignWithMargins = True
-      Left = 22
-      Top = 302
-      Width = 174
+      Left = 24
+      Top = 261
+      Width = 114
       Height = 32
       Margins.Left = 10
       Margins.Top = 10
@@ -178,8 +169,8 @@ object FCadProdutos: TFCadProdutos
       TextHint = '0,00'
     end
     object CheckBox1: TCheckBox
-      Left = 24
-      Top = 362
+      Left = 25
+      Top = 312
       Width = 97
       Height = 17
       Caption = 'Ativo'
@@ -187,22 +178,14 @@ object FCadProdutos: TFCadProdutos
       Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
-      Font.Style = []
+      Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 2
-    end
-    object ListB: TListBox
-      Left = 27
-      Top = 448
-      Width = 425
-      Height = 130
-      ItemHeight = 13
-      TabOrder = 3
     end
     object EdtDescricao: TEdit
       AlignWithMargins = True
       Left = 22
-      Top = 225
+      Top = 185
       Width = 387
       Height = 29
       Margins.Left = 10
@@ -219,10 +202,10 @@ object FCadProdutos: TFCadProdutos
       TextHint = 'Digite a descri'#231#227'o de produto'
     end
     object AtualizarGridProdutos1: TDBGrid
-      Left = 24
-      Top = 584
-      Width = 731
-      Height = 83
+      Left = 25
+      Top = 411
+      Width = 427
+      Height = 198
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -235,6 +218,7 @@ object FCadProdutos: TFCadProdutos
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnCellClick = AtualizarGridProdutos1CellClick
       Columns = <
         item
           Expanded = False
@@ -255,7 +239,7 @@ object FCadProdutos: TFCadProdutos
           Title.Font.Height = -16
           Title.Font.Name = 'Tahoma'
           Title.Font.Style = [fsBold]
-          Width = 508
+          Width = 220
           Visible = True
         end
         item
@@ -266,7 +250,7 @@ object FCadProdutos: TFCadProdutos
           Title.Font.Height = -16
           Title.Font.Name = 'Tahoma'
           Title.Font.Style = [fsBold]
-          Width = 363
+          Width = 120
           Visible = True
         end>
     end
@@ -288,7 +272,7 @@ object FCadProdutos: TFCadProdutos
     object Panel4: TPanel
       AlignWithMargins = True
       Left = 25
-      Top = 400
+      Top = 360
       Width = 180
       Height = 30
       Margins.Left = 100
@@ -329,34 +313,40 @@ object FCadProdutos: TFCadProdutos
         ExplicitLeft = 2
       end
     end
-    object Button1: TButton
-      Left = 458
-      Top = 376
-      Width = 75
-      Height = 25
-      Caption = 'Button1'
+    object btnVoltar: TButton
+      Left = 25
+      Top = 632
+      Width = 150
+      Height = 27
+      Caption = 'Voltar ao inicio'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 8
-      OnClick = Button1Click
+      OnClick = btnVoltarClick
     end
-    object Button3: TButton
-      Left = 584
-      Top = 376
-      Width = 75
-      Height = 25
-      Caption = 'Consultar'
-      TabOrder = 9
-      OnClick = Button3Click
+    object ListB: TListBox
+      Left = 25
+      Top = 411
+      Width = 427
+      Height = 130
+      ItemHeight = 13
+      TabOrder = 3
+      Visible = False
     end
   end
   object OpenDialog1: TOpenDialog
     FileName = 'C:\Users\User\Downloads\adicionar-ficheiro.png'
-    Left = 410
-    Top = 122
+    Left = 626
+    Top = 42
   end
   object Timer1: TTimer
     Enabled = False
     Interval = 200
-    Left = 330
-    Top = 122
+    Left = 538
+    Top = 42
   end
 end

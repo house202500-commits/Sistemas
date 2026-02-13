@@ -1,0 +1,258 @@
+﻿unit FrmConsult;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  Vcl.StdCtrls, dxGDIPlusClasses, Vcl.ExtCtrls,FrmListClient,
+    conexao,
+   // Data.DB,
+    // Vcl.Grids,
+   Vcl.Mask,
+   Vcl.DBCtrls,
+  // Data.DB,
+   FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
+
+type
+  TFrmConsulta = class(TForm)
+    Panel1: TPanel;
+    Label13: TLabel;
+    Label3: TLabel;
+    Image1: TImage;
+    edtPesquisa: TEdit;
+    rbNome: TRadioButton;
+    rbCPF: TRadioButton;
+    RadioButton2: TRadioButton;
+    CkClienAtv: TCheckBox;
+    CheckBox1: TCheckBox;
+    Panel2: TPanel;
+    DBGrid1: TDBGrid;
+    Button1: TButton;
+    btnExcluir: TButton;
+    EdtCPF: TEdit;
+    procedure Button1Click(Sender: TObject);
+    procedure Image1Click(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
+    procedure AtualizarGrid;
+    procedure DBGrid1CellClick(Column: TColumn);
+  private
+    { Private declarations }
+    FModoEdicao: Boolean;
+    FIDClienteAtual: Integer;
+    procedure CarregarCliente(IDCliente: Integer);
+
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmConsulta: TFrmConsulta;
+
+implementation
+ uses
+  FrmVendas;
+{$R *.dfm}
+
+procedure TFrmConsulta.AtualizarGrid;
+var
+  WhereClause: string;
+begin
+  Dm.QryCadClientes.Close;
+  Dm.QryCadClientes.SQL.Clear;
+  Dm.QryCadClientes.SQL.Add('SELECT ID_CLIENTE, CPF_CNPJ, NOME_COMPLETO, EMAIL, TELEFONE,ENDERECO,NUMERO, CIDADE, DATA_CADASTRO,STATUS,UF,BAIRRO');
+  Dm.QryCadClientes.SQL.Add('FROM CLIENTES');
+  Dm.QryCadClientes.SQL.Add('WHERE STATUS = ''A''');
+
+  if Trim(edtPesquisa.Text) <> '' then
+  begin
+    if rbNome.Checked then
+      Dm.QryCadClientes.SQL.Add('AND UPPER(NOME_COMPLETO) LIKE :PESQUISA')
+    else if rbCPF.Checked then
+      Dm.QryCadClientes.SQL.Add('AND CPF_CNPJ LIKE :PESQUISA');
+
+    Dm.QryCadClientes.ParamByName('PESQUISA').AsString := '%' + UpperCase(edtPesquisa.Text) + '%';
+  end;
+
+  Dm.QryCadClientes.SQL.Add('ORDER BY NOME_COMPLETO');
+  Dm.QryCadClientes.Open;
+
+  DBGrid1.Columns.Clear;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'ID_CLIENTE';
+    Title.Caption := 'ID';
+    Width := 50;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'CPF_CNPJ';
+    Title.Caption := 'CPF/CNPJ';
+    Width := 120;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'NOME_COMPLETO';
+    Title.Caption := 'Nome';
+    Width := 200;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'EMAIL';
+    Title.Caption := 'Email';
+    Width := 150;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'TELEFONE';
+    Title.Caption := 'Telefone';
+    Width := 100;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'DATA_CADASTRO';
+    Title.Caption := 'Cadastro';
+    Width := 120;
+   // DisplayFormat := 'dd/mm/yyyy hh:nn';
+  end;
+end;
+
+procedure TFrmConsulta.btnExcluirClick(Sender: TObject);
+var
+  Qry: TFDQuery;
+begin
+  if FIDClienteAtual <= 0 then
+  begin
+    ShowMessage('Selecione um cliente para excluir!');
+    Exit;
+  end;
+
+  if MessageDlg('Deseja APAGAR DEFINITIVAMENTE o cliente ID ' + IntToStr(FIDClienteAtual) + '?',
+                mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    Qry := TFDQuery.Create(nil);
+    try
+      Qry.Connection := Dm.Fconexao;
+
+      // Comando para APAGAR do banco de dados
+      Qry.SQL.Text := 'DELETE FROM CLIENTES WHERE ID_CLIENTE = :ID';
+      Qry.ParamByName('ID').AsInteger := FIDClienteAtual;
+      Qry.ExecSQL;
+
+      ShowMessage('✅ Cliente removido do banco com sucesso!');
+
+      // ORDEM CRÍTICA: Primeiro limpamos o ID e o texto para não dar erro no parâmetro PESQUISA
+      FIDClienteAtual := 0;
+      edtPesquisa.Text := '';
+
+      // Agora atualizamos o Grid (Certifique-se que AtualizarGrid trata o texto vazio)
+      AtualizarGrid;
+
+      FModoEdicao := False;
+
+    finally
+      Qry.Free;
+    end;
+  end;
+end;
+
+procedure TFrmConsulta.Button1Click(Sender: TObject);
+begin
+  FrmLista.Visible := not FrmLista.Visible;
+end;
+
+procedure TFrmConsulta.CarregarCliente(IDCliente: Integer);
+var
+  Qry: TFDQuery;
+begin
+  if IDCliente <= 0 then exit;
+
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := Dm.Fconexao;
+    Qry.SQL.Text := 'SELECT * FROM CLIENTES WHERE ID_CLIENTE = :ID AND STATUS = ''A''';
+    Qry.ParamByName('ID').AsInteger := IDCliente;
+    Qry.Open;
+
+
+
+    if not Qry.IsEmpty then
+    begin
+    //  FIDClienteAtual := IDCliente;
+    //  FModoEdicao := True;
+     // HabilitarControles(True);
+    {
+      // Carregar dados
+      if Qry.FieldByName('TIPO_PESSOA').AsString = 'F' then
+      begin
+        RadioButton1.Checked := True;
+        RadioButton2.Checked := False;
+      end
+      else
+      begin
+        RadioButton1.Checked := False;
+        RadioButton2.Checked := True;
+      end;
+    }
+      EdtCPF.Text := Qry.FieldByName('CPF_CNPJ').AsString;
+      edtPesquisa.Text := Qry.FieldByName('NOME_COMPLETO').AsString;
+
+      edtPesquisa.Text := IntToStr(FIDClienteAtual);
+
+      ShowMessage('✅ Cliente carregado para edição!');
+    end
+    else
+    begin
+      ShowMessage('❌ Cliente não encontrado ou inativo!');
+    end;
+
+  finally
+    Qry.Free;
+  end;
+end;
+
+procedure TFrmConsulta.DBGrid1CellClick(Column: TColumn);
+begin
+  if not Dm.QryCadClientes.IsEmpty then
+  begin
+    FIDClienteAtual := Dm.QryCadClientes.FieldByName('ID_CLIENTE').AsInteger;
+
+    CarregarCliente(FIDClienteAtual);
+    FrmLista.LbClient.CAPTION := Dm.QryCadClientes.FieldByName('NOME_COMPLETO').AsString;
+    FrmLista.LbEnderco.CAPTION := Dm.QryCadClientes.FieldByName('ENDERECO').AsString;
+    FrmLista.LbCidade.CAPTION := Dm.QryCadClientes.FieldByName('CIDADE').AsString;
+    FrmLista.LbTelefone.CAPTION := Dm.QryCadClientes.FieldByName('TELEFONE').AsString;
+    FrmLista.LbEmail.CAPTION := Dm.QryCadClientes.FieldByName('EMAIL').AsString;
+    FrmLista.LblCPF.CAPTION := Dm.QryCadClientes.FieldByName('CPF_CNPJ').AsString;
+    FrmLista.LbCadastro.CAPTION := Dm.QryCadClientes.FieldByName('DATA_CADASTRO').AsString;
+    FrmLista.LbNum.CAPTION := Dm.QryCadClientes.FieldByName('NUMERO').AsString;
+    FrmLista.LbUF.CAPTION := Dm.QryCadClientes.FieldByName('UF').AsString;
+    FrmLista.LbBairro.CAPTION := Dm.QryCadClientes.FieldByName('BAIRRO').AsString;
+
+    FrmVenda.LisBox.Items.Clear;
+    FrmLista.show
+  end;
+end;
+
+procedure TFrmConsulta.Image1Click(Sender: TObject);
+begin
+  AtualizarGrid;
+  if FIDClienteAtual > 0 then
+    CarregarCliente(FIDClienteAtual)
+  else if Trim(edtPesquisa.Text) <> '' then
+    CarregarCliente(StrToIntDef(edtPesquisa.Text, 0))
+  else
+   // ShowMessage('Informe o ID do cliente para consultar!');
+end;
+
+end.

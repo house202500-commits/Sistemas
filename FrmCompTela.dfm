@@ -2,8 +2,8 @@ object FrmTelaCompras: TFrmTelaCompras
   Left = 0
   Top = 0
   Caption = 'Tela de Compra'
-  ClientHeight = 422
-  ClientWidth = 636
+  ClientHeight = 418
+  ClientWidth = 648
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,14 +11,14 @@ object FrmTelaCompras: TFrmTelaCompras
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object LbCliente: TLabel
     Left = 24
     Top = 134
-    Width = 74
+    Width = 5
     Height = 21
-    Caption = 'Ana Paula'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -17
@@ -68,9 +68,8 @@ object FrmTelaCompras: TFrmTelaCompras
   object LbDataComp: TLabel
     Left = 280
     Top = 54
-    Width = 86
+    Width = 5
     Height = 21
-    Caption = '01/01/2026'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -17
@@ -83,7 +82,7 @@ object FrmTelaCompras: TFrmTelaCompras
     Top = 54
     Width = 27
     Height = 21
-    Caption = '000'
+    Caption = '001'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -17
@@ -120,9 +119,9 @@ object FrmTelaCompras: TFrmTelaCompras
   object Panel2: TPanel
     AlignWithMargins = True
     Left = 10
-    Top = 181
-    Width = 616
-    Height = 238
+    Top = 180
+    Width = 628
+    Height = 235
     Margins.Left = 10
     Margins.Top = 10
     Margins.Right = 10
@@ -157,11 +156,11 @@ object FrmTelaCompras: TFrmTelaCompras
       ParentFont = False
     end
     object LbQuantidC: TLabel
-      Left = 125
-      Top = 63
-      Width = 9
+      Left = 549
+      Top = 59
+      Width = 42
       Height = 21
-      Caption = '5'
+      Caption = 'Teste'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
@@ -185,9 +184,8 @@ object FrmTelaCompras: TFrmTelaCompras
     object LbVUnitC: TLabel
       Left = 142
       Top = 103
-      Width = 50
+      Width = 5
       Height = 21
-      Caption = '300,00'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
@@ -211,9 +209,8 @@ object FrmTelaCompras: TFrmTelaCompras
     object LbDescontC: TLabel
       Left = 184
       Top = 143
-      Width = 41
+      Width = 5
       Height = 21
-      Caption = '50,00'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
@@ -237,9 +234,8 @@ object FrmTelaCompras: TFrmTelaCompras
     object LbVlorItemC: TLabel
       Left = 185
       Top = 183
-      Width = 50
+      Width = 5
       Height = 21
-      Caption = '250,00'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
@@ -260,5 +256,88 @@ object FrmTelaCompras: TFrmTelaCompras
       Font.Style = [fsBold]
       ParentFont = False
     end
+    object CbQuatEditar: TComboBox
+      Left = 124
+      Top = 59
+      Width = 52
+      Height = 29
+      Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      Text = '  1'
+      OnChange = CbQuatEditarChange
+      Items.Strings = (
+        '01'
+        '02'
+        '03'
+        '04'
+        '05'
+        '06'
+        '07'
+        '08'
+        '09'
+        '10')
+    end
+  end
+  object Button1: TButton
+    Left = 528
+    Top = 91
+    Width = 92
+    Height = 25
+    Caption = 'Testar '
+    TabOrder = 1
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Left = 515
+    Top = 385
+    Width = 105
+    Height = 25
+    Caption = 'Atualizar'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -17
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 2
+    OnClick = Button2Click
+  end
+  object Edit1: TEdit
+    Left = 528
+    Top = 122
+    Width = 121
+    Height = 21
+    TabOrder = 3
+    Text = 'Edit1'
+  end
+  object Edit2: TEdit
+    Left = 528
+    Top = 149
+    Width = 121
+    Height = 21
+    TabOrder = 4
+    Text = 'Edit2'
+  end
+  object mtItens: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 544
+    Top = 24
+  end
+  object dsItens: TDataSource
+    DataSet = mtItens
+    Left = 480
+    Top = 24
   end
 end

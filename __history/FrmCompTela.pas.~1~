@@ -1,0 +1,43 @@
+unit FrmCompTela;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+
+type
+  TFrmTelaCompras = class(TForm)
+    Panel2: TPanel;
+    Label20: TLabel;
+    LbDesProdC: TLabel;
+    LbQuantidC: TLabel;
+    Label5: TLabel;
+    LbVUnitC: TLabel;
+    Label6: TLabel;
+    LbDescontC: TLabel;
+    Label8: TLabel;
+    LbVlorItemC: TLabel;
+    Label9: TLabel;
+    LbCliente: TLabel;
+    Label2: TLabel;
+    LbTotalComp: TLabel;
+    Label3: TLabel;
+    LbDataComp: TLabel;
+    LbNumCompr: TLabel;
+    Label13: TLabel;
+    Label1: TLabel;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmTelaCompras: TFrmTelaCompras;
+
+implementation
+
+{$R *.dfm}
+
+end.

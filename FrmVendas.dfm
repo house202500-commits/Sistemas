@@ -2,7 +2,7 @@ object FrmVenda: TFrmVenda
   AlignWithMargins = True
   Left = 0
   Top = 0
-  Width = 1078
+  Width = 1090
   Height = 884
   VertScrollBar.Range = 1000
   Caption = 'Tela de Venda'
@@ -15,14 +15,15 @@ object FrmVenda: TFrmVenda
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     AlignWithMargins = True
     Left = 10
     Top = 10
-    Width = 1025
-    Height = 247
+    Width = 1037
+    Height = 231
     Margins.Left = 10
     Margins.Top = 10
     Margins.Right = 10
@@ -84,7 +85,7 @@ object FrmVenda: TFrmVenda
       ParentFont = False
     end
     object Image1: TImage
-      Left = 443
+      Left = 447
       Top = 81
       Width = 33
       Height = 29
@@ -327,32 +328,6 @@ object FrmVenda: TFrmVenda
       Stretch = True
       OnClick = Image1Click
     end
-    object Label5: TLabel
-      Left = 24
-      Top = 197
-      Width = 98
-      Height = 21
-      Caption = 'Valor Total:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -17
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label6: TLabel
-      Left = 124
-      Top = 197
-      Width = 20
-      Height = 21
-      Caption = 'R$'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -17
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
     object Label10: TLabel
       Left = 320
       Top = 35
@@ -365,6 +340,34 @@ object FrmVenda: TFrmVenda
       Font.Style = []
       ParentFont = False
     end
+    object LbEnd: TLabel
+      Left = 95
+      Top = 124
+      Width = 338
+      Height = 21
+      AutoSize = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
+    end
+    object LbCid: TLabel
+      Left = 95
+      Top = 161
+      Width = 338
+      Height = 21
+      AutoSize = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
+    end
     object Edit3: TEdit
       AlignWithMargins = True
       Left = 92
@@ -375,6 +378,7 @@ object FrmVenda: TFrmVenda
       Margins.Top = 10
       Margins.Right = 10
       Margins.Bottom = 5
+      Color = cl3DLight
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
@@ -385,12 +389,12 @@ object FrmVenda: TFrmVenda
     end
     object LisBox: TListBox
       AlignWithMargins = True
-      Left = 92
-      Top = 118
-      Width = 477
-      Height = 51
-      BevelInner = bvNone
-      BevelOuter = bvNone
+      Left = 576
+      Top = 124
+      Width = 193
+      Height = 73
+      BevelKind = bkSoft
+      BevelOuter = bvRaised
       BorderStyle = bsNone
       Color = clSilver
       Font.Charset = DEFAULT_CHARSET
@@ -401,13 +405,30 @@ object FrmVenda: TFrmVenda
       ItemHeight = 21
       ParentFont = False
       TabOrder = 1
+      Visible = False
+    end
+    object Edit1: TEdit
+      Left = 712
+      Top = 40
+      Width = 121
+      Height = 21
+      TabOrder = 2
+      Text = 'Edit1'
+    end
+    object Edit2: TEdit
+      Left = 710
+      Top = 67
+      Width = 121
+      Height = 21
+      TabOrder = 3
+      Text = 'Edit2'
     end
   end
   object Panel2: TPanel
     AlignWithMargins = True
     Left = 10
-    Top = 277
-    Width = 1025
+    Top = 261
+    Width = 1037
     Height = 356
     Margins.Left = 10
     Margins.Top = 10
@@ -417,7 +438,7 @@ object FrmVenda: TFrmVenda
     Color = clSilver
     ParentBackground = False
     TabOrder = 1
-    object Label7: TLabel
+    object LbValorTl: TLabel
       Left = 171
       Top = 304
       Width = 20
@@ -446,86 +467,16 @@ object FrmVenda: TFrmVenda
     object DBGrid1: TDBGrid
       Left = 27
       Top = 72
-      Width = 942
-      Height = 201
+      Width = 726
+      Height = 97
+      DataSource = FrmAdicionar.dsItens
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
-      Columns = <
-        item
-          Expanded = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -16
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          Title.Caption = 'C'#243'digo'
-          Title.Font.Charset = DEFAULT_CHARSET
-          Title.Font.Color = clWindowText
-          Title.Font.Height = -17
-          Title.Font.Name = 'Tahoma'
-          Title.Font.Style = [fsBold]
-          Width = 90
-          Visible = True
-        end
-        item
-          Expanded = False
-          Title.Caption = 'Produto'
-          Title.Font.Charset = DEFAULT_CHARSET
-          Title.Font.Color = clWindowText
-          Title.Font.Height = -17
-          Title.Font.Name = 'Tahoma'
-          Title.Font.Style = [fsBold]
-          Width = 489
-          Visible = True
-        end
-        item
-          Expanded = False
-          Title.Caption = 'Quant.'
-          Title.Font.Charset = DEFAULT_CHARSET
-          Title.Font.Color = clWindowText
-          Title.Font.Height = -17
-          Title.Font.Name = 'Tahoma'
-          Title.Font.Style = [fsBold]
-          Width = 71
-          Visible = True
-        end
-        item
-          Expanded = False
-          Title.Caption = 'Valor Unit.'
-          Title.Font.Charset = DEFAULT_CHARSET
-          Title.Font.Color = clWindowText
-          Title.Font.Height = -17
-          Title.Font.Name = 'Tahoma'
-          Title.Font.Style = [fsBold]
-          Width = 99
-          Visible = True
-        end
-        item
-          Expanded = False
-          Title.Caption = 'Desc.'
-          Title.Font.Charset = DEFAULT_CHARSET
-          Title.Font.Color = clWindowText
-          Title.Font.Height = -17
-          Title.Font.Name = 'Tahoma'
-          Title.Font.Style = [fsBold]
-          Width = 58
-          Visible = True
-        end
-        item
-          Expanded = False
-          Title.Caption = 'Valor Total'
-          Title.Font.Charset = DEFAULT_CHARSET
-          Title.Font.Color = clWindowText
-          Title.Font.Height = -17
-          Title.Font.Name = 'Tahoma'
-          Title.Font.Style = [fsBold]
-          Width = 106
-          Visible = True
-        end>
+      OnCellClick = DBGrid1CellClick
     end
     object Panel5: TPanel
       AlignWithMargins = True
@@ -644,16 +595,47 @@ object FrmVenda: TFrmVenda
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = btnEditClick
         OnMouseEnter = btnEditMouseEnter
         OnMouseLeave = btnEditMouseLeave
       end
+    end
+    object Button1: TButton
+      Left = 759
+      Top = 28
+      Width = 75
+      Height = 25
+      Caption = 'Button1'
+      TabOrder = 4
+      OnClick = Button1Click
+    end
+    object DBGrid2: TDBGrid
+      Left = 27
+      Top = 168
+      Width = 726
+      Height = 120
+      TabOrder = 5
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+    end
+    object Button2: TButton
+      Left = 678
+      Top = 304
+      Width = 75
+      Height = 25
+      Caption = 'Relatorio'
+      TabOrder = 6
+      OnClick = Button2Click
     end
   end
   object Panel3: TPanel
     AlignWithMargins = True
     Left = 10
-    Top = 653
-    Width = 1025
+    Top = 637
+    Width = 1037
     Height = 311
     Margins.Left = 10
     Margins.Top = 10
@@ -719,7 +701,7 @@ object FrmVenda: TFrmVenda
       AlignWithMargins = True
       Left = 16
       Top = 16
-      Width = 953
+      Width = 965
       Height = 129
       Margins.Left = 15
       Margins.Top = 15
@@ -774,13 +756,13 @@ object FrmVenda: TFrmVenda
     end
     object Panel8: TPanel
       AlignWithMargins = True
-      Left = 27
+      Left = 16
       Top = 256
       Width = 183
       Height = 29
-      Margins.Left = 100
+      Margins.Left = 50
       Margins.Top = 5
-      Margins.Right = 100
+      Margins.Right = 50
       Margins.Bottom = 5
       BevelOuter = bvNone
       Color = 11576927
@@ -814,13 +796,13 @@ object FrmVenda: TFrmVenda
     end
     object Panel9: TPanel
       AlignWithMargins = True
-      Left = 258
+      Left = 224
       Top = 256
       Width = 183
       Height = 29
-      Margins.Left = 100
+      Margins.Left = 70
       Margins.Top = 5
-      Margins.Right = 100
+      Margins.Right = 70
       Margins.Bottom = 5
       BevelOuter = bvNone
       Color = 11576927
@@ -848,19 +830,20 @@ object FrmVenda: TFrmVenda
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = btnImprimirClick
         OnMouseEnter = btnImprimirMouseEnter
         OnMouseLeave = btnImprimirMouseLeave
       end
     end
     object Panel10: TPanel
       AlignWithMargins = True
-      Left = 488
+      Left = 431
       Top = 256
-      Width = 183
+      Width = 190
       Height = 29
-      Margins.Left = 100
+      Margins.Left = 70
       Margins.Top = 5
-      Margins.Right = 100
+      Margins.Right = 70
       Margins.Bottom = 5
       BevelOuter = bvNone
       Color = 11576927
@@ -875,12 +858,13 @@ object FrmVenda: TFrmVenda
       ParentDoubleBuffered = False
       ParentFont = False
       TabOrder = 3
-      object btnCanc: TSpeedButton
-        Left = -2
+      object btnExibe: TSpeedButton
+        Left = 0
         Top = 0
-        Width = 185
+        Width = 190
         Height = 29
-        Caption = 'Cancelar'
+        Align = alClient
+        Caption = 'Resumo de Vendas'
         Flat = True
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
@@ -888,19 +872,23 @@ object FrmVenda: TFrmVenda
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        OnMouseEnter = btnCancMouseEnter
-        OnMouseLeave = btnCancMouseLeave
+        OnClick = btnExibeClick
+        OnMouseEnter = btnExibeMouseEnter
+        OnMouseLeave = btnExibeMouseLeave
+        ExplicitLeft = -2
+        ExplicitTop = 3
+        ExplicitWidth = 185
       end
     end
     object Panel11: TPanel
       AlignWithMargins = True
-      Left = 712
+      Left = 645
       Top = 256
       Width = 183
       Height = 29
-      Margins.Left = 100
+      Margins.Left = 70
       Margins.Top = 5
-      Margins.Right = 100
+      Margins.Right = 70
       Margins.Bottom = 5
       BevelOuter = bvNone
       Color = 11576927
@@ -932,6 +920,14 @@ object FrmVenda: TFrmVenda
         OnMouseEnter = btnFecharMouseEnter
         OnMouseLeave = btnFecharMouseLeave
       end
+    end
+    object Button3: TButton
+      Left = 443
+      Top = 174
+      Width = 131
+      Height = 25
+      Caption = 'Exibe Venda Total'
+      TabOrder = 5
     end
   end
 end

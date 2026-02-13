@@ -1,0 +1,30 @@
+object DRelatorio: TDRelatorio
+  OldCreateOrder = False
+  Height = 186
+  Width = 286
+  object VW_VENDAS_MOVIMENTO: TfrxDBDataset
+    UserName = 'frxDBDataset1'
+    CloseDataSource = False
+    FieldAliases.Strings = (
+      'ID_VENDA=ID_VENDA'
+      'DATA_VENDA=DATA_VENDA'
+      'QUANTIDADE=QUANTIDADE'
+      'VALOR_UNITARIO=VALOR_UNITARIO'
+      'DESCONTO=DESCONTO'
+      'VALOR_TOTAL=VALOR_TOTAL'
+      'STATUS=STATUS'
+      'ID_CLIENTE=ID_CLIENTE'
+      'NOME_COMPLETO=NOME_COMPLETO'
+      'ID_PRODUTO=ID_PRODUTO'
+      'NOME_PRODUTO=NOME_PRODUTO'
+      'ID_CEP=ID_CEP'
+      'CEP=CEP'
+      'LOGRADOURO=LOGRADOURO'
+      'CIDADE=CIDADE'
+      'UF=UF')
+    DataSet = Dm.FDView
+    BCDToCurrency = False
+    Left = 80
+    Top = 80
+  end
+end

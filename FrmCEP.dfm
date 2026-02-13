@@ -97,11 +97,11 @@ object CadCEP: TCadCEP
       ParentFont = False
     end
     object Label5: TLabel
-      Left = 57
+      Left = 68
       Top = 358
-      Width = 41
+      Width = 30
       Height = 21
-      Caption = 'Brasil'
+      Caption = 'Pais'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
@@ -240,20 +240,7 @@ object CadCEP: TCadCEP
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label21: TLabel
-      Left = 337
-      Top = 275
-      Width = 152
-      Height = 24
-      Caption = 'Testado codigo'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clRed
-      Font.Height = -20
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Edit1: TEdit
+    object EdtEndereco: TEdit
       AlignWithMargins = True
       Left = 111
       Top = 138
@@ -272,7 +259,7 @@ object CadCEP: TCadCEP
       TabOrder = 0
       TextHint = 'Rua, Avenida, Pra'#231'a...'
     end
-    object Edit3: TEdit
+    object EdtConituacao: TEdit
       AlignWithMargins = True
       Left = 111
       Top = 182
@@ -304,9 +291,9 @@ object CadCEP: TCadCEP
       TabOrder = 2
       Text = 'BR'
     end
-    object Edit4: TEdit
+    object EdtBairro: TEdit
       AlignWithMargins = True
-      Left = 105
+      Left = 111
       Top = 226
       Width = 188
       Height = 29
@@ -322,7 +309,7 @@ object CadCEP: TCadCEP
       ParentFont = False
       TabOrder = 3
     end
-    object Edit5: TEdit
+    object EdtCidade: TEdit
       AlignWithMargins = True
       Left = 111
       Top = 270
@@ -341,7 +328,7 @@ object CadCEP: TCadCEP
       TabOrder = 4
       TextHint = 'Nome da cidade'
     end
-    object ComboBox1: TComboBox
+    object CBBrasil: TComboBox
       Left = 111
       Top = 355
       Width = 74
@@ -475,6 +462,7 @@ object CadCEP: TCadCEP
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = btnSalvarClick
         OnMouseEnter = btnSalvarMouseEnter
         OnMouseLeave = btnSalvarMouseLeave
       end

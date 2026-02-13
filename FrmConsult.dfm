@@ -55,7 +55,7 @@ object FrmConsulta: TFrmConsulta
       ParentFont = False
     end
     object Image1: TImage
-      Left = 454
+      Left = 455
       Top = 81
       Width = 33
       Height = 29
@@ -301,27 +301,36 @@ object FrmConsulta: TFrmConsulta
     object edtPesquisa: TEdit
       AlignWithMargins = True
       Left = 101
-      Top = 81
+      Top = 85
       Width = 350
       Height = 29
-      Margins.Left = 10
-      Margins.Top = 10
-      Margins.Right = 10
+      Cursor = crIBeam
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
       Margins.Bottom = 5
+      AutoSize = False
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BiDiMode = bdLeftToRight
+      BorderStyle = bsNone
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
       Font.Name = 'Tahoma'
       Font.Style = []
+      ParentBiDiMode = False
+      ParentColor = True
       ParentFont = False
       TabOrder = 0
     end
     object rbNome: TRadioButton
       Left = 156
-      Top = 34
+      Top = 33
       Width = 85
       Height = 22
       Caption = 'Nome'
+      DragCursor = crHandPoint
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
@@ -329,13 +338,15 @@ object FrmConsulta: TFrmConsulta
       Font.Style = []
       ParentFont = False
       TabOrder = 1
+      OnClick = rbNomeClick
     end
     object rbCPF: TRadioButton
       Left = 247
       Top = 33
-      Width = 97
+      Width = 58
       Height = 22
-      Caption = 'CPF/CNPJ'
+      Caption = 'CPF'
+      DragCursor = crHandPoint
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
@@ -343,13 +354,16 @@ object FrmConsulta: TFrmConsulta
       Font.Style = []
       ParentFont = False
       TabOrder = 2
+      OnClick = rbCPFClick
+      OnEnter = rbCPFEnter
     end
-    object RadioButton2: TRadioButton
-      Left = 368
+    object RbCNPJ: TRadioButton
+      Left = 328
       Top = 33
-      Width = 85
+      Width = 65
       Height = 22
-      Caption = 'C'#243'digo'
+      Caption = 'CNPJ'
+      DragCursor = crHandPoint
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -17
@@ -357,6 +371,8 @@ object FrmConsulta: TFrmConsulta
       Font.Style = []
       ParentFont = False
       TabOrder = 3
+      OnClick = RbCNPJClick
+      OnEnter = RbCNPJEnter
     end
     object CkClienAtv: TCheckBox
       Left = 24
@@ -386,13 +402,52 @@ object FrmConsulta: TFrmConsulta
       ParentFont = False
       TabOrder = 5
     end
-    object EdtCPF: TEdit
-      Left = 488
-      Top = 35
-      Width = 225
-      Height = 21
+    object RadioButton1: TRadioButton
+      Left = 419
+      Top = 33
+      Width = 85
+      Height = 22
+      Caption = 'C'#243'digo'
+      DragCursor = crHandPoint
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 6
-      Text = 'CPF'
+      OnClick = RadioButton1Click
+    end
+    object MaskEdit1: TMaskEdit
+      AlignWithMargins = True
+      Left = 99
+      Top = 81
+      Width = 348
+      Height = 29
+      Cursor = crIBeam
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
+      AutoSelect = False
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      Color = clSilver
+      Ctl3D = True
+      DoubleBuffered = False
+      DragCursor = crIBeam
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -17
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentCtl3D = False
+      ParentDoubleBuffered = False
+      ParentFont = False
+      TabOrder = 7
+      Text = ''
+      Visible = False
     end
   end
   object Panel2: TPanel
@@ -496,7 +551,7 @@ object FrmConsulta: TFrmConsulta
     OnClick = Button1Click
   end
   object btnExcluir: TButton
-    Left = 272
+    Left = 279
     Top = 488
     Width = 75
     Height = 25

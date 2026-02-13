@@ -1,0 +1,101 @@
+unit FrmCEP;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, FrmCadastro,
+  Vcl.Buttons, dxGDIPlusClasses, Vcl.Mask;
+
+type
+  TCadCEP = class(TForm)
+    PnCEP: TPanel;
+    Label12: TLabel;
+    Label1: TLabel;
+    Edit1: TEdit;
+    Label2: TLabel;
+    Edit3: TEdit;
+    CbUF: TComboBox;
+    Label3: TLabel;
+    Edit4: TEdit;
+    Label4: TLabel;
+    Edit5: TEdit;
+    Label5: TLabel;
+    ComboBox1: TComboBox;
+    Image1: TImage;
+    Panel4: TPanel;
+    btnFechar: TSpeedButton;
+    Panel1: TPanel;
+    btnLimpar: TSpeedButton;
+    Panel2: TPanel;
+    btnSalvar: TSpeedButton;
+    Label13: TLabel;
+    EdtCEP: TMaskEdit;
+    Label21: TLabel;
+
+    procedure btnFecharClick(Sender: TObject);
+    procedure btnFecharMouseLeave(Sender: TObject);
+    procedure btnFecharMouseEnter(Sender: TObject);
+    procedure btnSalvarMouseEnter(Sender: TObject);
+    procedure btnSalvarMouseLeave(Sender: TObject);
+    procedure btnLimparMouseLeave(Sender: TObject);
+    procedure btnLimparMouseEnter(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  CadCEP: TCadCEP;
+
+implementation
+
+{$R *.dfm}
+
+procedure TCadCEP.btnFecharClick(Sender: TObject);
+begin
+ CadCEP.visible:= not CadCEP.visible;
+ FrmClientes.Panel1.visible := true;
+end;
+
+procedure TCadCEP.btnFecharMouseEnter(Sender: TObject);
+begin
+   btnFechar.Font.Color := $00908E4C;
+end;
+
+procedure TCadCEP.btnFecharMouseLeave(Sender: TObject);
+begin
+  btnFechar.Font.Color := clWhite;
+end;
+
+procedure TCadCEP.btnLimparMouseEnter(Sender: TObject);
+begin
+   btnLimpar.Font.Color := $00908E4C;
+end;
+
+procedure TCadCEP.btnLimparMouseLeave(Sender: TObject);
+begin
+   btnLimpar.Font.Color := clWhite;
+end;
+
+procedure TCadCEP.btnSalvarMouseEnter(Sender: TObject);
+begin
+   btnSalvar.Font.Color := $00908E4C;
+end;
+
+procedure TCadCEP.btnSalvarMouseLeave(Sender: TObject);
+begin
+   btnSalvar.Font.Color := clWhite;
+end;
+
+procedure TCadCEP.FormCreate(Sender: TObject);
+begin
+  EdtCEP.EditMask := '00000\-000;1;_';
+  EdtCEP.Text := '';
+
+end;
+
+end.

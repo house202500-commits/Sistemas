@@ -1,0 +1,319 @@
+unit FrmAdicConf;
+//juju1232
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+    conexao,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.FB, // Para FireBird
+  FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client,FrmConsult, Vcl.DBCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids;
+
+type
+  TFrmAdicionar = class(TForm)
+    Panel3: TPanel;
+    Label14: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    CbProduto: TComboBox;
+    LbQuant: TLabel;
+    LbVlUnit: TLabel;
+    LbDesc: TLabel;
+    LbTotItem: TLabel;
+    Panel11: TPanel;
+    Panel1: TPanel;
+    btnConfirma: TSpeedButton;
+    btnCancelar: TSpeedButton;
+    CbQuant: TComboBox;
+    dsItens: TDataSource;
+    mtItens: TFDMemTable;
+    Label5: TLabel;
+    LbCod: TLabel;
+    procedure btnConfirmaClick(Sender: TObject);
+    procedure btnCancelarClick(Sender: TObject);
+    procedure btnCancelarMouseEnter(Sender: TObject);
+    procedure btnCancelarMouseLeave(Sender: TObject);
+    procedure btnConfirmaMouseEnter(Sender: TObject);
+    procedure btnConfirmaMouseLeave(Sender: TObject);
+    procedure CbProdutoClick(Sender: TObject);
+    procedure DBLookupComboBox1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure CbProdutoChange(Sender: TObject);
+    procedure CbQuantChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+
+  private
+    procedure CalcularTotal;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmAdicionar: TFrmAdicionar;
+
+implementation
+uses
+FrmVendas;
+
+{$R *.dfm}
+
+
+procedure TFrmAdicionar.CalcularTotal;
+var
+  Qtd: Integer;
+  Valor: Double;
+begin
+  if not TryStrToInt(CbQuant.Text, Qtd) then Qtd := 0;
+  if not TryStrToFloat(StringReplace(LbVlUnit.caption, ',', '.', [rfReplaceAll]), Valor) then
+    Valor := 0;
+
+  LbTotItem.caption := FormatFloat('0.00', Qtd * Valor);
+end;
+
+
+procedure TFrmAdicionar.btnCancelarClick(Sender: TObject);
+begin
+   close;
+end;
+
+procedure TFrmAdicionar.btnCancelarMouseEnter(Sender: TObject);
+begin
+   btnCancelar.Font.Color := $00908E4C;
+end;
+
+procedure TFrmAdicionar.btnCancelarMouseLeave(Sender: TObject);
+begin
+   btnCancelar.Font.Color := clWhite;
+end;
+
+procedure TFrmAdicionar.btnConfirmaClick(Sender: TObject);
+var
+  Quant: Integer;
+  ValUnit, Desc, TotItem, SomaTotal: Double;
+  Descricao: string;
+begin
+  // Ler valores dos controles
+  Quant := StrToIntDef(CbQuant.Text, 1);
+  Descricao := CbProduto.Text;
+  ValUnit := StrToFloatDef(LbVlUnit.Caption, 0);
+  Desc := StrToFloatDef(StringReplace(LbDesc.Caption, '%', '', [rfReplaceAll]), 0) / 100;
+
+  // Calcular total do item
+  TotItem := Quant * ValUnit * (1 - Desc);
+
+  // Adicionar linha no TFDMemTable
+  mtItens.Append;
+  mtItens.FieldByName('CODIGO').AsInteger := StrToIntDef(LbCod.Caption, 0);
+  mtItens.FieldByName('DESCRICAO').AsString := Descricao;
+  mtItens.FieldByName('QUANTIDADE').AsInteger := Quant;
+  mtItens.FieldByName('VALOR_UNIT').AsFloat := ValUnit;
+  mtItens.FieldByName('DESCONTO').AsFloat := Desc * 100;
+  mtItens.FieldByName('TOTAL_ITEM').AsFloat := TotItem;
+  mtItens.Post;
+
+  // Somar TOTAL_ITEM
+  SomaTotal := 0;
+  mtItens.First;
+  while not mtItens.Eof do
+  begin
+    SomaTotal := SomaTotal + mtItens.FieldByName('TOTAL_ITEM').AsFloat;
+    mtItens.Next;
+  end;
+
+  FrmVenda.LbValorTl.Caption := FormatFloat('0.00', SomaTotal);
+
+  FrmAdicionar.Visible := False;
+end;
+
+
+
+
+
+procedure TFrmAdicionar.btnConfirmaMouseEnter(Sender: TObject);
+begin
+   btnConfirma.Font.Color := $00908E4C;
+end;
+
+procedure TFrmAdicionar.btnConfirmaMouseLeave(Sender: TObject);
+begin
+   btnConfirma.Font.Color := clWhite;
+end;
+
+procedure TFrmAdicionar.CbProdutoChange(Sender: TObject);
+var
+  Qry: TFDQuery;
+  IdProduto: Integer;
+begin
+  if CbProduto.ItemIndex < 0 then Exit;
+
+  IdProduto := Integer(CbProduto.Items.Objects[CbProduto.ItemIndex]);
+
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := Dm.Fconexao;
+    Qry.SQL.Text :=
+      'SELECT VALOR_UNITARIO, CODIGO ' +
+      'FROM PRODUTOS ' +
+      'WHERE ID_PRODUTO = :ID';
+
+    Qry.ParamByName('ID').AsInteger := IdProduto;
+    Qry.Open;
+
+    if not Qry.IsEmpty then
+    begin
+      LbVlUnit.Caption :=
+        FormatFloat('0.00', Qry.FieldByName('VALOR_UNITARIO').AsFloat);
+
+      LbCod.Caption :=
+        IntToStr(Qry.FieldByName('CODIGO').AsInteger);
+    end;
+
+  finally
+    Qry.Free;
+  end;
+
+  CalcularTotal;
+end;
+
+
+
+procedure TFrmAdicionar.CbProdutoClick(Sender: TObject);
+var
+  QrySelect2: TFDQuery;
+begin
+ // CbProduto.Items.Clear;
+
+  QrySelect2 := TFDQuery.Create(nil);
+  try
+    QrySelect2.Connection := Dm.Fconexao;
+    QrySelect2.SQL.Text :=
+      'SELECT ID_PRODUTO, DESCRICAO ' +
+      'FROM PRODUTOS ' +
+      'WHERE STATUS = ''A'' ' +
+      'ORDER BY DATA_CADASTRO DESC';
+    QrySelect2.Open;
+
+    while not QrySelect2.Eof do
+    begin
+      // Texto que aparece no ComboBox
+      CbProduto.Items.AddObject(
+        QrySelect2.FieldByName('DESCRICAO').AsString,
+        TObject(QrySelect2.FieldByName('ID_PRODUTO').AsInteger)
+      );
+
+      QrySelect2.Next;
+    end;
+
+  finally
+    QrySelect2.Free;
+  end;
+end;
+
+
+procedure TFrmAdicionar.CbQuantChange(Sender: TObject);
+var
+  Quantidade: Integer;
+  ValorUnit: Double;
+  Total: Double;
+begin
+  // Quantidade
+  if not TryStrToInt(CbQuant.Text, Quantidade) then
+    Quantidade := 0;
+
+  // Valor unitário (Label)
+  if not TryStrToFloat(LbVlUnit.Caption, ValorUnit) then
+    ValorUnit := 0;
+
+  Total := Quantidade * ValorUnit;
+
+  // Mostrar total no Label
+  LbTotItem.Caption := FormatFloat('0.00', Total);
+end;
+
+
+procedure TFrmAdicionar.DBLookupComboBox1Click(Sender: TObject);
+var
+  QrySelect2: TFDQuery;
+begin
+  QrySelect2 := TFDQuery.Create(nil);
+  try
+    QrySelect2.Connection := Dm.Fconexao;
+    QrySelect2.SQL.Text :=
+      'SELECT ID_PRODUTO, DESCRICAO ' +
+      'FROM PRODUTOS ' +
+      'WHERE STATUS = ''A''';
+    QrySelect2.Open;
+
+    Dm.DtCadProd.DataSet := QrySelect2;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar produtos: ' + E.Message);
+  end;
+end;
+
+procedure TFrmAdicionar.FormCreate(Sender: TObject);
+begin
+  mtItens.Close;
+  mtItens.FieldDefs.Clear;
+
+  mtItens.FieldDefs.Add('CODIGO', ftInteger);
+  mtItens.FieldDefs.Add('DESCRICAO', ftString, 60);
+  mtItens.FieldDefs.Add('QUANTIDADE', ftInteger);
+  mtItens.FieldDefs.Add('VALOR_UNIT', ftFloat);
+  mtItens.FieldDefs.Add('DESCONTO', ftFloat);
+  mtItens.FieldDefs.Add('TOTAL_ITEM', ftFloat);
+
+  FrmVenda.DBGrid1.Columns[0].Alignment := taLeftJustify;
+
+  mtItens.CreateDataSet;
+  mtItens.Open;
+
+  dsItens.DataSet := mtItens;
+  FrmVenda.DBGrid1.DataSource := dsItens;
+end;
+
+
+procedure TFrmAdicionar.FormShow(Sender: TObject);
+var
+  QrySelect2: TFDQuery;
+begin
+  CbProduto.Clear;
+
+  QrySelect2 := TFDQuery.Create(nil);
+  try
+    QrySelect2.Connection := Dm.Fconexao;
+    QrySelect2.SQL.Text :=
+      'SELECT ID_PRODUTO, DESCRICAO ' +
+      'FROM PRODUTOS ' +
+      'WHERE STATUS = ''A'' ' +
+      'ORDER BY DESCRICAO';
+    QrySelect2.Open;
+
+    while not QrySelect2.Eof do
+    begin
+      // Texto visível no ComboBox
+      CbProduto.Items.AddObject(
+        QrySelect2.FieldByName('DESCRICAO').AsString,
+        TObject(QrySelect2.FieldByName('ID_PRODUTO').AsInteger)
+      );
+      QrySelect2.Next;
+    end;
+
+  finally
+    QrySelect2.Free;
+  end;
+end;
+
+
+
+
+
+end.

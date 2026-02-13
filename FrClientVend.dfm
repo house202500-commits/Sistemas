@@ -29,8 +29,6 @@ object FrmClientVenda: TFrmClientVenda
     Color = clSilver
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = 5
-    ExplicitTop = 5
     object Label3: TLabel
       Left = 24
       Top = 32
@@ -290,9 +288,9 @@ object FrmClientVenda: TFrmClientVenda
     object Label1: TLabel
       Left = 253
       Top = 384
-      Width = 63
+      Width = 114
       Height = 24
-      Caption = 'Testar'
+      Caption = 'Descartado'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clRed
       Font.Height = -20

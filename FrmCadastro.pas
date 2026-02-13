@@ -23,6 +23,7 @@ uses
    Vcl.Mask,
    Vcl.DBCtrls,
   // Data.DB,
+  System.MaskUtils,
    FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
@@ -38,10 +39,9 @@ type
     Panel1: TPanel;
     Label1: TLabel;
     Label2: TLabel;
-    Label3: TLabel;
-    Label5: TLabel;
+    LbPrincipal: TLabel;
     Label6: TLabel;
-    Label7: TLabel;
+    LCPPJ: TLabel;
     Label8: TLabel;
     Label4: TLabel;
     Label9: TLabel;
@@ -53,23 +53,18 @@ type
     Label15: TLabel;
     Label16: TLabel;
     Label17: TLabel;
-    Label18: TLabel;
-    Label19: TLabel;
     Edit1: TEdit;
-    Edit2: TEdit;
-    RadioButton1: TRadioButton;
-    RadioButton2: TRadioButton;
+    EditCEP: TEdit;
+    RadioCPF: TRadioButton;
+    RadioCNPJ: TRadioButton;
     Edit3: TEdit;
     Edit4: TEdit;
-    EdtCPF: TEdit;
-    ComboBox1: TComboBox;
-    Edit8: TEdit;
-    Edit9: TEdit;
+    CmbUF: TComboBox;
+    EditEndereco: TEdit;
+    EditNum: TEdit;
     Edit5: TEdit;
-    Edit10: TEdit;
-    Edit11: TEdit;
-    Edit12: TEdit;
-    Edit13: TEdit;
+    EditBairro: TEdit;
+    EditCidade: TEdit;
     Edit7: TEdit;
     Button1: TButton;
     Label20: TLabel;
@@ -77,23 +72,26 @@ type
     Label22: TLabel;
     edtIDCliente: TEdit;
     Button3: TButton;
-    Button4: TButton;
-    DateTimePicker1: TDateTimePicker;
+    btnCanc: TButton;
     Label23: TLabel;
     Edit6: TEdit;
-    Label24: TLabel;
-    Label25: TLabel;
-    Label26: TLabel;
-    Label27: TLabel;
-    DBGrid1: TDBGrid;
+    MaskEdt: TMaskEdit;
+    Label5: TLabel;
+    LBUF: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
-    procedure Edit2Click(Sender: TObject);
-    procedure EdtCPFChange(Sender: TObject);
+    procedure EditCEPClick(Sender: TObject);
+    procedure MaskEdtChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
+
+    procedure RadioCNPJClick(Sender: TObject);
+    procedure RadioCPFClick(Sender: TObject);
+    procedure MaskEdit1Change(Sender: TObject);
+    procedure Edit6MouseEnter(Sender: TObject);
+    procedure Edit3KeyPress(Sender: TObject; var Key: Char);
+    procedure btnCancClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -130,27 +128,34 @@ procedure TFrmClientes.AplicarMascaraCPFCNPJ;
 var
   Doc: string;
 begin
-  Doc := RemoveFormatacao(EdtCPF.Text);
+  Doc := RemoveFormatacao(MaskEdt.Text);
 
-  if RadioButton1.Checked and (Length(Doc) = 11) then
-    EdtCPF.Text := Format('%s.%s.%s-%s',
+  if RadioCPF.Checked and (Length(Doc) = 11) then
+    MaskEdt.Text := Format('%s.%s.%s-%s',
       [Copy(Doc, 1, 3), Copy(Doc, 4, 3), Copy(Doc, 7, 3), Copy(Doc, 10, 2)])
-  else if RadioButton2.Checked and (Length(Doc) = 14) then
-    EdtCPF.Text := Format('%s.%s.%s/%s-%s',
+  else if RadioCNPJ.Checked and (Length(Doc) = 14) then
+    MaskEdt.Text := Format('%s.%s.%s/%s-%s',
       [Copy(Doc, 1, 2), Copy(Doc, 3, 3), Copy(Doc, 6, 3),
        Copy(Doc, 9, 4), Copy(Doc, 13, 2)]);
 end;
 
 procedure TFrmClientes.AtualizarGrid;
 begin
+////////
+end;
 
+procedure TFrmClientes.btnCancClick(Sender: TObject);
+begin
+  if MessageDlg('Deseja realmente cancelar o cadastro?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    Self.Close;
+  end;
 end;
 
 procedure TFrmClientes.Button1Click(Sender: TObject);
 begin
  FCadProdutos.show;
 end;
-
 
 procedure TFrmClientes.Button2Click(Sender: TObject);
 var
@@ -161,12 +166,12 @@ begin
   try
     ValidarCampos;
 
-    if RadioButton1.Checked then
+    if RadioCPF.Checked then
       TipoPessoa := 'F'
     else
       TipoPessoa := 'J';
 
-    CPF_CNPJ_Limpo := RemoveFormatacao(EdtCPF.Text);
+    CPF_CNPJ_Limpo := RemoveFormatacao(MaskEdt.Text);
 
     Dm.Fconexao.StartTransaction;
     Qry := TFDQuery.Create(nil);
@@ -214,33 +219,17 @@ begin
       Qry.ParamByName('CPF_CNPJ').AsString := CPF_CNPJ_Limpo;
       Qry.ParamByName('NOME_COMPLETO').AsString := Trim(Edit3.Text);
 
-      if DateTimePicker1.Date = 0 then
-        Qry.ParamByName('DATA_NASCIMENTO').Clear
-      else
-        Qry.ParamByName('DATA_NASCIMENTO').AsDate := DateTimePicker1.Date;
-
       Qry.ParamByName('EMAIL').AsString := Trim(Edit7.Text);
       Qry.ParamByName('EMAIL_CONFIRMADO').AsString := Trim(Edit4.Text);
 
-      if Trim(Edit12.Text) <> '' then
-      begin
-        Qry.ParamByName('SENHA').AsString := Trim(Edit12.Text);
-        Qry.ParamByName('SENHA_CONFIRMADA').AsString := Trim(Edit13.Text);
-      end
-      else
-      begin
-        Qry.ParamByName('SENHA').Clear;
-        Qry.ParamByName('SENHA_CONFIRMADA').Clear;
-      end;
-
       Qry.ParamByName('TELEFONE').AsString := RemoveFormatacao(Edit1.Text);
-      Qry.ParamByName('CEP').AsString := RemoveFormatacao(Edit2.Text);
-      Qry.ParamByName('ENDERECO').AsString := Trim(Edit8.Text);
-      Qry.ParamByName('NUMERO').AsString := Trim(Edit9.Text);
+      Qry.ParamByName('CEP').AsString := RemoveFormatacao(EditCEP.Text);
+      Qry.ParamByName('ENDERECO').AsString := Trim(EditEndereco.Text);
+      Qry.ParamByName('NUMERO').AsString := Trim(EditNum.Text);
       Qry.ParamByName('COMPLEMENTO').AsString := Trim(Edit5.Text);
-      Qry.ParamByName('BAIRRO').AsString := Trim(Edit10.Text);
-      Qry.ParamByName('CIDADE').AsString := Trim(Edit11.Text);
-      Qry.ParamByName('UF').AsString := ComboBox1.Text;
+      Qry.ParamByName('BAIRRO').AsString := Trim(EditBairro.Text);
+      Qry.ParamByName('CIDADE').AsString := Trim(EditCidade.Text);
+      Qry.ParamByName('UF').AsString := LBUF.Caption;
 
       if FModoEdicao then
         Qry.ExecSQL
@@ -298,12 +287,6 @@ begin
   end;
 end;
 
-
-procedure TFrmClientes.Button4Click(Sender: TObject);
-begin
-FCadProdutos.Show;
-end;
-
 procedure TFrmClientes.CarregarCliente(IDCliente: Integer);
 begin
 
@@ -312,54 +295,84 @@ end;
 procedure TFrmClientes.ConfigurarControles;
 begin
 
-  EdtCPF.MaxLength := 18;
+  MaskEdt.MaxLength := 18;
   Edit1.MaxLength := 15;
-  Edit2.MaxLength := 9;
+  EditCEP.MaxLength := 9;
   Edit7.MaxLength := 100;
   Edit4.MaxLength := 100;
-  Edit12.MaxLength := 100;
-  Edit13.MaxLength := 100;
   Edit3.MaxLength := 100;
-  Edit8.MaxLength := 200;
-  Edit10.MaxLength := 50;
-  Edit11.MaxLength := 50;
+  EditEndereco.MaxLength := 200;
+  EditBairro.MaxLength := 50;
+  EditCidade.MaxLength := 50;
 
-  DateTimePicker1.Date := Now;
-  DateTimePicker1.MaxDate := Now;
-
- // DBGrid1.Left := 550;
- // DBGrid1.Top := 140;
- // DBGrid1.Width := 600;
- // DBGrid1.Height := 500;
-
-  Label22.Caption := 'ID Cliente:';
+  Label5.Caption := 'ID Cliente:';
   edtIDCliente.ReadOnly := True;
 end;
 
 
-procedure TFrmClientes.Edit2Click(Sender: TObject);
+procedure TFrmClientes.EditCEPClick(Sender: TObject);
 begin
   CadCEP.Visible := not CadCEP.Visible;
   Panel1.visible:= not Panel1.visible;
 
 end;
 
-procedure TFrmClientes.EdtCPFChange(Sender: TObject);
+procedure TFrmClientes.Edit3KeyPress(Sender: TObject; var Key: Char);
 begin
-  if Length(EdtCPF.Text) = 12 then
+       if not (Key in ['a'..'z', 'A'..'Z', #8, #32]) then
+  begin
+    Key := #0;
+  end;
+end;
+
+procedure TFrmClientes.Edit6MouseEnter(Sender: TObject);
+begin
+  Edit6.NumbersOnly := True;
+   if Length(Edit6.Text) = 5 then
+      Edit3.SetFocus;
+end;
+
+procedure TFrmClientes.MaskEdit1Change(Sender: TObject);
+begin
+  // Remove espaços vazios para saber o quanto foi realmente digitado
+  // Se o CPF estiver completo, o Trim não achará espaços em branco
+  if Pos(' ', MaskEdt.Text) = 0 then
+  begin
+    Label20.Caption := '✔';
+    Edit6.SetFocus;
+  end
+  else
+  begin
+    Label20.Caption := '';
+  end;
+end;
+
+procedure TFrmClientes.MaskEdtChange(Sender: TObject);
+begin
+   begin
+
+  if Length(Trim(Edit6.Text)) = 5 then
+  begin
+    Edit3.SetFocus;
+    Edit3.TextHint := 'Nome ...';
+  end;
+
+  if Length(Trim(Edit6.Text)) > 0 then
     Label20.Caption := '✔'
   else
     Label20.Caption := '';
+end;
+
 end;
 
 procedure TFrmClientes.FormatarCEP;
 var
   CEP: string;
 begin
-  CEP := RemoveFormatacao(Edit2.Text);
+  CEP := RemoveFormatacao(EditCEP.Text);
 
   if Length(CEP) = 8 then
-    Edit2.Text := Format('%s-%s', [Copy(CEP, 1, 5), Copy(CEP, 6, 3)]);
+    EditCEP.Text := Format('%s-%s', [Copy(CEP, 1, 5), Copy(CEP, 6, 3)]);
 end;
 
 procedure TFrmClientes.FormatarTelefone;
@@ -382,36 +395,7 @@ begin
 
   Dm.QryCadClientes.Connection := Dm.Fconexao;
   Dm.DSCadClientes.DataSet := Dm.QryCadClientes;
-  DBGrid1.DataSource := Dm.DSCadClientes;
-
-  ComboBox1.Items.Clear;
-  ComboBox1.Items.Add('AC');
-  ComboBox1.Items.Add('AL');
-  ComboBox1.Items.Add('AP');
-  ComboBox1.Items.Add('AM');
-  ComboBox1.Items.Add('BA');
-  ComboBox1.Items.Add('CE');
-  ComboBox1.Items.Add('DF');
-  ComboBox1.Items.Add('ES');
-  ComboBox1.Items.Add('GO');
-  ComboBox1.Items.Add('MA');
-  ComboBox1.Items.Add('MT');
-  ComboBox1.Items.Add('MS');
-  ComboBox1.Items.Add('MG');
-  ComboBox1.Items.Add('PA');
-  ComboBox1.Items.Add('PB');
-  ComboBox1.Items.Add('PR');
-  ComboBox1.Items.Add('PE');
-  ComboBox1.Items.Add('PI');
-  ComboBox1.Items.Add('RJ');
-  ComboBox1.Items.Add('RN');
-  ComboBox1.Items.Add('RS');
-  ComboBox1.Items.Add('RO');
-  ComboBox1.Items.Add('RR');
-  ComboBox1.Items.Add('SC');
-  ComboBox1.Items.Add('SP');
-  ComboBox1.Items.Add('SE');
-  ComboBox1.Items.Add('TO');
+ // DBGrid1.DataSource := Dm.DSCadClientes;
 
   ConfigurarControles;
   HabilitarControles(False);
@@ -434,24 +418,46 @@ end;
 
 procedure TFrmClientes.LimparCampos;
 begin
-  RadioButton1.Checked := False;
-  RadioButton2.Checked := False;
-  EdtCPF.Clear;
+  RadioCPF.Checked := False;
+  RadioCNPJ.Checked := False;
+  MaskEdt.Clear;
   Edit3.Clear;
-  DateTimePicker1.Date := Now;
+  Edit6.Clear;
   Edit7.Clear;
   Edit4.Clear;
-  Edit12.Clear;
-  Edit13.Clear;
   Edit1.Clear;
-  Edit2.Clear;
-  Edit8.Clear;
-  Edit9.Clear;
+  EditCEP.Clear;
+  EditEndereco.Clear;
+  EditNum.Clear;
   Edit5.Clear;
-  Edit10.Clear;
-  Edit11.Clear;
-  ComboBox1.ItemIndex := -1;
+  EditBairro.Clear;
+  EditCidade.Clear;
+//  ComboBox1.ItemIndex := -1;
   Label20.Caption := '';
+end;
+
+procedure TFrmClientes.RadioCPFClick(Sender: TObject);
+begin
+  MaskEdt.Clear;
+  MaskEdt.EditMask := '000\.000\.000\-00;1;-';
+  MaskEdt.TextHint := '000.000.000-00';
+  //MaskEdt.width := 121;
+  LbPrincipal.Caption := 'Nome Completo';
+  LCPPJ.Caption       := 'CPF';
+  Edit3.AutoSize := True;
+  MaskEdt.SetFocus;
+end;
+
+procedure TFrmClientes.RadioCNPJClick(Sender: TObject);
+begin
+  MaskEdt.Clear;
+  MaskEdt.EditMask := '00\.000\.000\/0000\-00;1;_';
+  MaskEdt.TextHint := '00\.000\.000\/0000\-00';
+  //MaskEdt.width := 154;
+  LbPrincipal.Caption := 'Nome Fantasia';
+  LCPPJ.Caption       := 'CNPJ';
+  Edit3.AutoSize := True;
+  MaskEdt.SetFocus;
 end;
 
 function TFrmClientes.RemoveFormatacao(Texto: string): string;
@@ -468,20 +474,20 @@ end;
 procedure TFrmClientes.ValidarCampos;
 begin
 
-  if not RadioButton1.Checked and not RadioButton2.Checked then
+  if not RadioCPF.Checked and not RadioCNPJ.Checked then
     raise Exception.Create('Selecione o tipo de pessoa (Física ou Jurídica)');
 
-  if Trim(EdtCPF.Text) = '' then
+  if Trim(MaskEdt.Text) = '' then
     raise Exception.Create('Informe o CPF ou CNPJ');
 
-  if RadioButton1.Checked then
+  if RadioCPF.Checked then
   begin
-    if not ValidarCPF(EdtCPF.Text) then
+    if not ValidarCPF(MaskEdt.Text) then
       raise Exception.Create('CPF inválido');
   end
   else
   begin
-    if not ValidarCNPJ(EdtCPF.Text) then
+    if not ValidarCNPJ(MaskEdt.Text) then
       raise Exception.Create('CNPJ inválido');
   end;
 
@@ -497,22 +503,13 @@ begin
       raise Exception.Create('Emails não conferem');
   end;
 
-  if Trim(Edit12.Text) <> '' then
+  if Trim(EditCEP.Text) <> '' then
   begin
-    if Length(Edit12.Text) < 6 then
-      raise Exception.Create('Senha deve ter pelo menos 6 caracteres');
-
-    if Edit12.Text <> Edit13.Text then
-      raise Exception.Create('Senhas não conferem');
-  end;
-
-  if Trim(Edit2.Text) <> '' then
-  begin
-    if Length(RemoveFormatacao(Edit2.Text)) < 8 then
+    if Length(RemoveFormatacao(EditCEP.Text)) < 8 then
       raise Exception.Create('CEP inválido');
   end;
 
-  if ComboBox1.Text = '' then
+  if LBUF.Caption = '' then
     raise Exception.Create('Selecione a UF');
 end;
 

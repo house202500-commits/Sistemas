@@ -3,14 +3,34 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids, Vcl.DBGrids,
-  Vcl.StdCtrls, dxGDIPlusClasses, Vcl.ExtCtrls,FrmListClient,
-    conexao,
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.UITypes,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Mask,
+  Vcl.DBCtrls,
+
+  System.MaskUtils,
+ // MaskUtils,
+
+  Data.DB,
+  dxGDIPlusClasses,
+  conexao,
    // Data.DB,
     // Vcl.Grids,
-   Vcl.Mask,
-   Vcl.DBCtrls,
+
   // Data.DB,
    FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
@@ -27,24 +47,42 @@ type
     edtPesquisa: TEdit;
     rbNome: TRadioButton;
     rbCPF: TRadioButton;
-    RadioButton2: TRadioButton;
+    RbCNPJ: TRadioButton;
     CkClienAtv: TCheckBox;
     CheckBox1: TCheckBox;
     Panel2: TPanel;
     DBGrid1: TDBGrid;
     Button1: TButton;
     btnExcluir: TButton;
-    EdtCPF: TEdit;
+    RadioButton1: TRadioButton;
+    MaskEdit1: TMaskEdit;
     procedure Button1Click(Sender: TObject);
     procedure Image1Click(Sender: TObject);
     procedure btnExcluirClick(Sender: TObject);
     procedure AtualizarGrid;
+
+    procedure AtualizarDgrid;
     procedure DBGrid1CellClick(Column: TColumn);
+
+    procedure MaskEdit1Exit(Sender: TObject);
+    procedure rbCPFEnter(Sender: TObject);
+
+    procedure rbCPFClick(Sender: TObject);
+    procedure RbCNPJClick(Sender: TObject);
+    procedure rbNomeClick(Sender: TObject);
+    procedure RadioButton1Click(Sender: TObject);
+    procedure RbCNPJEnter(Sender: TObject);
+
+
+
+
+
   private
     { Private declarations }
     FModoEdicao: Boolean;
     FIDClienteAtual: Integer;
     procedure CarregarCliente(IDCliente: Integer);
+
 
   public
     { Public declarations }
@@ -55,16 +93,41 @@ var
 
 implementation
  uses
-  FrmVendas;
+  FrmVendas, FrmListClient;
 {$R *.dfm}
 
+procedure TFrmConsulta.AtualizarDgrid;
+begin
+  if not Dm.QryCadClientes.IsEmpty then
+  begin
+    FIDClienteAtual := Dm.QryCadClientes.FieldByName('ID_CLIENTE').AsInteger;
+
+    CarregarCliente(FIDClienteAtual);
+    FrmLista.LbIDCliente.CAPTION := Dm.QryCadClientes.FieldByName('ID_CLIENTE').AsString;
+    FrmLista.LbClient.CAPTION := Dm.QryCadClientes.FieldByName('NOME_COMPLETO').AsString;
+    FrmLista.LbEnderco.CAPTION := Dm.QryCadClientes.FieldByName('ENDERECO').AsString;
+    FrmLista.LbCidade.CAPTION := Dm.QryCadClientes.FieldByName('CIDADE').AsString;
+    FrmLista.LbTelefone.CAPTION := Dm.QryCadClientes.FieldByName('TELEFONE').AsString;
+    FrmLista.LbEmail.CAPTION := Dm.QryCadClientes.FieldByName('EMAIL').AsString;
+    FrmLista.LblCPF.CAPTION := Dm.QryCadClientes.FieldByName('CPF_CNPJ').AsString;
+    FrmLista.LbCadastro.CAPTION := Dm.QryCadClientes.FieldByName('DATA_CADASTRO').AsString;
+    FrmLista.LbNum.CAPTION := Dm.QryCadClientes.FieldByName('NUMERO').AsString;
+    FrmLista.LbUF.CAPTION := Dm.QryCadClientes.FieldByName('UF').AsString;
+    FrmLista.LbCEP.CAPTION := Dm.QryCadClientes.FieldByName('CEP').AsString;
+    FrmLista.LbBairro.CAPTION := Dm.QryCadClientes.FieldByName('BAIRRO').AsString;
+
+    FrmVenda.LisBox.Items.Clear;
+    FrmLista.show
+  end;
+end;
+
 procedure TFrmConsulta.AtualizarGrid;
-var
-  WhereClause: string;
+//var
+ // WhereClause: string;
 begin
   Dm.QryCadClientes.Close;
   Dm.QryCadClientes.SQL.Clear;
-  Dm.QryCadClientes.SQL.Add('SELECT ID_CLIENTE, CPF_CNPJ, NOME_COMPLETO, EMAIL, TELEFONE,ENDERECO,NUMERO, CIDADE, DATA_CADASTRO,STATUS,UF,BAIRRO');
+  Dm.QryCadClientes.SQL.Add('SELECT ID_CLIENTE, CPF_CNPJ, NOME_COMPLETO, EMAIL, TELEFONE,ENDERECO,NUMERO, CIDADE, DATA_CADASTRO,STATUS,UF,BAIRRO, CEP');
   Dm.QryCadClientes.SQL.Add('FROM CLIENTES');
   Dm.QryCadClientes.SQL.Add('WHERE STATUS = ''A''');
 
@@ -118,6 +181,14 @@ begin
     Width := 100;
   end;
 
+    with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'CEP';
+    Title.Caption := 'Cep';
+    Width := 50;
+  end;
+
+
   with DBGrid1.Columns.Add do
   begin
     FieldName := 'DATA_CADASTRO';
@@ -137,23 +208,28 @@ begin
     Exit;
   end;
 
-  if MessageDlg('Excluir cliente ID ' + IntToStr(FIDClienteAtual) + '?',
+  if MessageDlg('Deseja APAGAR DEFINITIVAMENTE o cliente ID ' + IntToStr(FIDClienteAtual) + '?',
                 mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
     Qry := TFDQuery.Create(nil);
     try
       Qry.Connection := Dm.Fconexao;
-      Qry.SQL.Text := 'UPDATE CLIENTES SET STATUS = ''I'' WHERE ID_CLIENTE = :ID';
+
+      // Comando para APAGAR do banco de dados
+      Qry.SQL.Text := 'DELETE FROM CLIENTES WHERE ID_CLIENTE = :ID';
       Qry.ParamByName('ID').AsInteger := FIDClienteAtual;
       Qry.ExecSQL;
 
-      ShowMessage('✅ Cliente excluído com sucesso!');
+      ShowMessage('✅ Cliente removido do banco com sucesso!');
 
-      AtualizarGrid;
-      FModoEdicao := False;
-    //  HabilitarControles(False);
+      // ORDEM CRÍTICA: Primeiro limpamos o ID e o texto para não dar erro no parâmetro PESQUISA
       FIDClienteAtual := 0;
-      edtPesquisa.Clear;
+      edtPesquisa.Text := '';
+
+      // Agora atualizamos o Grid (Certifique-se que AtualizarGrid trata o texto vazio)
+      AtualizarGrid;
+
+      FModoEdicao := False;
 
     finally
       Qry.Free;
@@ -199,7 +275,7 @@ begin
         RadioButton2.Checked := True;
       end;
     }
-      EdtCPF.Text := Qry.FieldByName('CPF_CNPJ').AsString;
+
       edtPesquisa.Text := Qry.FieldByName('NOME_COMPLETO').AsString;
 
       edtPesquisa.Text := IntToStr(FIDClienteAtual);
@@ -218,26 +294,12 @@ end;
 
 procedure TFrmConsulta.DBGrid1CellClick(Column: TColumn);
 begin
-  if not Dm.QryCadClientes.IsEmpty then
-  begin
-    FIDClienteAtual := Dm.QryCadClientes.FieldByName('ID_CLIENTE').AsInteger;
-
-    CarregarCliente(FIDClienteAtual);
-    FrmLista.LbClient.CAPTION := Dm.QryCadClientes.FieldByName('NOME_COMPLETO').AsString;
-    FrmLista.LbEnderco.CAPTION := Dm.QryCadClientes.FieldByName('ENDERECO').AsString;
-    FrmLista.LbCidade.CAPTION := Dm.QryCadClientes.FieldByName('CIDADE').AsString;
-    FrmLista.LbTelefone.CAPTION := Dm.QryCadClientes.FieldByName('TELEFONE').AsString;
-    FrmLista.LbEmail.CAPTION := Dm.QryCadClientes.FieldByName('EMAIL').AsString;
-    FrmLista.LblCPF.CAPTION := Dm.QryCadClientes.FieldByName('CPF_CNPJ').AsString;
-    FrmLista.LbCadastro.CAPTION := Dm.QryCadClientes.FieldByName('DATA_CADASTRO').AsString;
-    FrmLista.LbNum.CAPTION := Dm.QryCadClientes.FieldByName('NUMERO').AsString;
-    FrmLista.LbUF.CAPTION := Dm.QryCadClientes.FieldByName('UF').AsString;
-    FrmLista.LbBairro.CAPTION := Dm.QryCadClientes.FieldByName('BAIRRO').AsString;
-
-    FrmVenda.LisBox.Items.Clear;
-    FrmLista.show
-  end;
+  AtualizarDgrid;
+  FrmLista.AtualizarEndereco;
 end;
+
+
+
 
 procedure TFrmConsulta.Image1Click(Sender: TObject);
 begin
@@ -249,5 +311,97 @@ begin
   else
    // ShowMessage('Informe o ID do cliente para consultar!');
 end;
+
+
+
+procedure TFrmConsulta.MaskEdit1Exit(Sender: TObject);
+
+var
+  TextoLimpo: string;
+begin
+  // Remove caracteres de formatação anteriores
+  TextoLimpo := StringReplace(StringReplace(MaskEdit1.Text, '.', '', [rfReplaceAll]), '-', '', [rfReplaceAll]);
+  TextoLimpo := StringReplace(TextoLimpo, '/', '', [rfReplaceAll]);
+
+  // Aplica máscara baseada no tamanho
+  if Length(TextoLimpo) = 11 then
+    MaskEdit1.Text := FormatMaskText('000\.000\.000-00;1;_', TextoLimpo)
+  else if Length(TextoLimpo) = 14 then
+    MaskEdit1.Text := FormatMaskText('00\.000\.000/0000-00;1;_', TextoLimpo);
+end;
+
+
+procedure TFrmConsulta.RadioButton1Click(Sender: TObject);
+begin
+  edtPesquisa.Visible := True;
+  MaskEdit1.Visible := False;
+  edtPesquisa.Text := '';
+  edtPesquisa.TextHint := 'Codigo...';
+  edtPesquisa.NumbersOnly := True;
+  edtPesquisa.Clear;
+end;
+
+
+
+
+
+procedure TFrmConsulta.RbCNPJClick(Sender: TObject);
+begin
+  edtPesquisa.Visible := False;
+  MaskEdit1.Visible := True;
+  MaskEdit1.Clear;
+  MaskEdit1.EditMask := '00\.000\.000\/0000\-00;1;_';
+  MaskEdit1.TextHint := '00\.000\.000\/0000\-00';
+  MaskEdit1.SetFocus;
+end;
+
+procedure TFrmConsulta.RbCNPJEnter(Sender: TObject);
+begin
+//     MaskEdit1.EditMask := '';
+end;
+
+procedure TFrmConsulta.rbCPFClick(Sender: TObject);
+begin
+  edtPesquisa.Visible := False;
+  MaskEdit1.Visible := True;
+  MaskEdit1.Clear;
+  MaskEdit1.EditMask := ' 000\.000\.000\-00;1; ';
+  MaskEdit1.TextHint := '000.000.000-00';
+  MaskEdit1.SetFocus;
+
+end;
+
+procedure TFrmConsulta.rbCPFEnter(Sender: TObject);
+var
+  TextoLimpo: string;
+begin
+  // Remove caracteres de formatação anteriores
+ // TextoLimpo := StringReplace(StringReplace(MaskEdit1.Text, '.', '', [rfReplaceAll]), '-', '', [rfReplaceAll]);
+ // TextoLimpo := StringReplace(TextoLimpo, '/', '', [rfReplaceAll]);
+
+  // Aplica máscara baseada no tamanho
+ // if Length(TextoLimpo) = 11 then
+ //   MaskEdit1.Text := FormatMaskText('000\.000\.000-00;1;_');
+ // else if Length(TextoLimpo) = 14 then
+ //   MaskEdit1.Text := FormatMaskText('00\.000\.000/0000-00;1;_', TextoLimpo);
+
+ //  MaskEdit1.EditMask := '';
+
+end;
+
+
+procedure TFrmConsulta.rbNomeClick(Sender: TObject);
+begin
+  MaskEdit1.Visible := False;
+  edtPesquisa.Visible := True;
+  edtPesquisa.TextHint := 'Nome...';
+ // edtPesquisa.Text := '';
+  edtPesquisa.Clear;
+  edtPesquisa.NumbersOnly := False;
+end;
+
+
+
+
 
 end.

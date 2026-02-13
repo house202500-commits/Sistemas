@@ -1,0 +1,473 @@
+﻿unit FrmProdutos;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ComCtrls,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+
+  dxGDIPlusClasses,
+  Data.DB, Vcl.Grids,
+  Vcl.DBGrids,
+
+  Vcl.Imaging.jpeg,
+  Vcl.Imaging.pngimage,
+  conexao,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.FB, // Para FireBird
+  FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client,FrmConsult;
+
+
+
+type
+  TFCadProdutos = class(TForm)
+    Panel1: TPanel;
+    Label13: TLabel;
+    Label5: TLabel;
+    edtCod: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    EdtValor: TEdit;
+    CheckBox1: TCheckBox;
+    ListB: TListBox;
+    EdtDescricao: TEdit;
+    AtualizarGridProdutos1: TDBGrid;
+    Image1: TImage;
+    OpenDialog1: TOpenDialog;
+    Button2: TButton;
+    SpeedButton1: TSpeedButton;
+    Panel4: TPanel;
+    btnEntrar: TSpeedButton;
+    Label3: TLabel;
+    Timer1: TTimer;
+    Image2: TImage;
+    Label4: TLabel;
+    btnVoltar: TButton;
+
+    procedure FormCreate(Sender: TObject);
+  //  procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure btnEntrarClick(Sender: TObject);
+    procedure btnEntrarMouseEnter(Sender: TObject);
+    procedure btnEntrarMouseLeave(Sender: TObject);
+    procedure edtCodMouseEnter(Sender: TObject);
+  //  procedure Timer1Timer(Sender: TObject);
+
+  procedure AtualizarGridProdutos;
+  procedure ConfigurarColunasGrid;
+
+    procedure TesteCompletoClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnVoltarClick(Sender: TObject);
+
+    procedure AtualizarGridProdutos1CellClick(Column: TColumn);
+    procedure Image2MouseEnter(Sender: TObject);
+    procedure Image2MouseLeave(Sender: TObject);
+
+  private
+    { Private declarations }
+   //  Contador: Integer;
+  public
+    { Public declarations }
+  end;
+
+var
+  FCadProdutos: TFCadProdutos;
+
+implementation
+ uses
+ FrmCadastro,FrmPrincipal;
+{$R *.dfm}
+
+
+procedure TFCadProdutos.AtualizarGridProdutos;
+var
+  QrySelect: TFDQuery;
+begin
+
+  if Assigned(ListB) then
+  begin
+    QrySelect := TFDQuery.Create(nil);
+    try
+      QrySelect.Connection := Dm.Fconexao;
+      QrySelect.SQL.Text :=
+        'SELECT ID_PRODUTO, CODIGO, DESCRICAO, ' +
+        '       VALOR_UNITARIO, DATA_CADASTRO, STATUS ' +
+        'FROM PRODUTOS ' +
+        'WHERE STATUS = ''A'' ' +
+        'ORDER BY DATA_CADASTRO DESC';
+      QrySelect.Open;
+
+      Dm.DtCadProd.DataSet := QrySelect;
+      AtualizarGridProdutos1.DataSource := Dm.DtCadProd;
+
+      ConfigurarColunasGrid;
+
+    except
+      on E: Exception do
+        ShowMessage('Erro ao carregar produtos: ' + E.Message);
+    end;
+  end;
+end;
+
+procedure TFCadProdutos.ConfigurarColunasGrid;
+begin
+  AtualizarGridProdutos1.Columns.Clear;
+
+  with AtualizarGridProdutos1.Columns.Add do
+  begin
+    FieldName := 'CODIGO';
+    Title.Caption := 'Código';
+    Width := 80;
+  end;
+
+  with AtualizarGridProdutos1.Columns.Add do
+  begin
+    FieldName := 'DESCRICAO';
+    Title.Caption := 'Descrição';
+    Width := 200;
+  end;
+
+  with AtualizarGridProdutos1.Columns.Add do
+  begin
+    FieldName := 'VALOR_UNITARIO';
+    Title.Caption := 'Valor R$';
+    Width := 100;
+   // DisplayFormat := '#,##0.00';
+  end;
+
+  with AtualizarGridProdutos1.Columns.Add do
+  begin
+    FieldName := 'DATA_CADASTRO';
+    Title.Caption := 'Data Cad.';
+    Width := 120;
+  end;
+end;
+
+procedure TFCadProdutos.AtualizarGridProdutos1CellClick(Column: TColumn);
+begin
+  ListB.Visible:= not ListB.Visible;
+end;
+
+procedure TFCadProdutos.btnEntrarClick(Sender: TObject);
+var
+  ValorProduto: Double;
+  MS: TMemoryStream;
+  IDGerado: Integer;
+  QryInsert: TFDQuery;
+begin
+
+  if Trim(edtCod.Text) = '' then
+  begin
+    ShowMessage('Informe o código do produto!');
+    edtCod.SetFocus;
+    Exit;
+  end;
+
+  if Trim(EdtDescricao.Text) = '' then
+  begin
+    ShowMessage('Informe a descrição do produto!');
+    EdtDescricao.SetFocus;
+    Exit;
+  end;
+
+  if Trim(EdtValor.Text) = '' then
+  begin
+    ShowMessage('Informe o valor do produto!');
+    EdtValor.SetFocus;
+    Exit;
+  end;
+
+
+  try
+    ValorProduto := StrToFloat(EdtValor.Text);
+    if ValorProduto <= 0 then
+    begin
+      ShowMessage('Valor deve ser maior que zero!');
+      EdtValor.SetFocus;
+      EdtValor.SelectAll;
+      Exit;
+    end;
+  except
+    ShowMessage('Valor inválido! Digite um número válido.');
+    EdtValor.SetFocus;
+    EdtValor.SelectAll;
+    Exit;
+  end;
+
+  if image1.Picture.Graphic = nil then
+  begin
+    ShowMessage('Selecione uma imagem para o produto!');
+    Exit;
+  end;
+
+  Dm.Fconexao.StartTransaction;
+  QryInsert := TFDQuery.Create(nil);
+  MS := TMemoryStream.Create;
+
+  try
+    try
+
+      QryInsert.Connection := Dm.Fconexao;
+
+      QryInsert.SQL.Text :=
+        'INSERT INTO PRODUTOS (CODIGO, DESCRICAO, VALOR_UNITARIO, IMAGEM, DATA_CADASTRO, STATUS) ' +
+        'VALUES (:CODIGO, :DESCRICAO, :VALOR_UNITARIO, :IMAGEM, :DATA_CADASTRO, :STATUS) ' +
+        'RETURNING ID_PRODUTO';
+
+      QryInsert.ParamByName('CODIGO').AsString := edtCod.Text;
+      QryInsert.ParamByName('DESCRICAO').AsString := EdtDescricao.Text;
+      QryInsert.ParamByName('VALOR_UNITARIO').AsFloat := ValorProduto;
+      QryInsert.ParamByName('DATA_CADASTRO').AsDateTime := Now;
+      QryInsert.ParamByName('STATUS').AsString := 'A'; // Ativo
+
+
+      if Assigned(image1.Picture.Graphic) then
+      begin
+        MS.Clear;
+        image1.Picture.Graphic.SaveToStream(MS);
+        MS.Position := 0;
+        QryInsert.ParamByName('IMAGEM').LoadFromStream(MS, ftBlob);
+      end;
+
+      QryInsert.Open;
+
+      if not QryInsert.IsEmpty then
+      begin
+        IDGerado := QryInsert.FieldByName('ID_PRODUTO').AsInteger;
+
+        Label4.Caption := Format('ID: %d - Cód: %s', [IDGerado, edtCod.Text]);
+       // ShowMessage('Produto cadastrado com sucesso! ID: ' + IntToStr(IDGerado));
+      end;
+
+
+      Dm.Fconexao.Commit;
+
+       ListB.Items.Add('');
+      ListB.Items.Add('✅ Data: ' + FormatDateTime('dd/MM/yyyy HH:mm:ss', Now));
+      ListB.Items.Add('✅ Código: ' + edtCod.Text);
+      ListB.Items.Add('✅ Descrição: ' + EdtDescricao.Text);
+      ListB.Items.Add('✅ Valor: R$ ' + FormatFloat('#,##0.00', ValorProduto));
+      ListB.Items.Add('');
+
+      if (ListB.Items.Count > 1) and
+         (ListB.Items[ListB.Items.Count - 2] = '--- Fim da lista ---') then
+      begin
+        ListB.Items.Delete(ListB.Items.Count - 2);
+      end;
+
+
+      ListB.Items.Add('--- Fim da lista ---');
+
+
+      Label3.Visible := True;
+      Label3.Caption := '✅ Produto cadastrado no banco!';
+      Label3.Font.Color := clGreen;
+
+
+      image2.Picture.Assign(image1.Picture);
+      Image2.Stretch := True;
+      Image2.Proportional := True;
+      Image2.Center := True;
+
+
+      edtCod.Clear;
+      EdtDescricao.Clear;
+      EdtValor.Clear;
+      Image1.Picture.Assign(nil);
+
+
+      edtCod.SetFocus;
+
+
+      AtualizarGridProdutos;
+
+    except
+      on E: EFDDBEngineException do
+      begin
+
+        Dm.Fconexao.Rollback;
+
+        if E.ErrorCode = 335544665 then
+          ShowMessage('❌ Código já existe no banco de dados!')
+        else if E.ErrorCode = 335544347 then
+          ShowMessage('❌ Valor deve ser maior que zero!')
+        else
+          ShowMessage('❌ Erro no banco: ' + E.Message);
+
+        edtCod.SetFocus;
+      end;
+
+      on E: Exception do
+      begin
+        Dm.Fconexao.Rollback;
+        ShowMessage('❌ Erro: ' + E.Message);
+        edtCod.SetFocus;
+      end;
+    end;
+      Image2.Visible:= True;
+  finally
+    QryInsert.Free;
+    MS.Free;
+  end;
+end;
+
+
+procedure TFCadProdutos.btnEntrarMouseEnter(Sender: TObject);
+begin
+     btnEntrar.Font.Color := $00908E4C;
+end;
+
+procedure TFCadProdutos.btnEntrarMouseLeave(Sender: TObject);
+begin
+   btnEntrar.Font.Color := clWhite;
+end;
+
+
+procedure TFCadProdutos.btnVoltarClick(Sender: TObject);
+begin
+  if MessageDlg('Deseja voltar ao inicio?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    Self.Close;
+  end;
+end;
+
+procedure TFCadProdutos.Button2Click(Sender: TObject);
+var
+  Ext: string;
+  Png: TPngImage;
+  Jpg: TJPEGImage;
+  Bmp: TBitmap;
+begin
+  OpenDialog1.Filter := 'Imagens (*.jpg;*.png;*.bmp)|*.jpg;*.png;*.bmp';
+
+  if OpenDialog1.Execute then
+  begin
+    Ext := LowerCase(ExtractFileExt(OpenDialog1.FileName));
+
+    try
+      if Ext = '.png' then
+      begin
+        Png := TPngImage.Create;
+        try
+          Png.LoadFromFile(OpenDialog1.FileName);
+          Png.Transparent := True;
+          Image1.Picture.Assign(Png);
+        finally
+          Png.Free;
+        end;
+      end
+      else if Ext = '.jpg' then
+      begin
+        Jpg := TJPEGImage.Create;
+        try
+          Jpg.LoadFromFile(OpenDialog1.FileName);
+          Image1.Picture.Assign(Jpg);
+        finally
+          Jpg.Free;
+        end;
+      end
+      else if Ext = '.bmp' then
+      begin
+        Bmp := TBitmap.Create;
+        try
+          Bmp.LoadFromFile(OpenDialog1.FileName);
+          Image1.Picture.Assign(Bmp);
+        finally
+          Bmp.Free;
+        end;
+      end
+      else
+        ShowMessage('Formato de imagem não suportado.');
+    except
+      on E: Exception do
+        ShowMessage('Erro ao carregar a imagem: ' + E.Message);
+    end;
+
+    Image1.Stretch := True;
+    Image1.Proportional := True;
+    Image1.Center := True;
+  end;
+end;
+
+
+
+procedure TFCadProdutos.TesteCompletoClick(Sender: TObject);
+begin
+  ShowMessage('Dm = ' + BoolToStr(Dm <> nil, True));
+  if Dm <> nil then
+    ShowMessage('Fconexao = ' + BoolToStr(Dm.Fconexao <> nil, True));
+end;
+
+procedure TFCadProdutos.edtCodMouseEnter(Sender: TObject);
+begin
+    Label3.Visible := False;
+end;
+
+procedure TFCadProdutos.FormCreate(Sender: TObject);
+begin
+  ListB.Items.Delimiter := ';';
+  ListB.Font.Name := 'Segoe UI';
+  ListB.Font.Size := 9;
+  ListB.Color := $00F9F9F9;
+  edtCod.TextHint := 'Digite uma nova regra...';
+end;
+
+
+
+procedure TFCadProdutos.FormShow(Sender: TObject);
+begin
+  if not Dm.Fconexao.Connected then
+  begin
+    Dm.Fconexao.Params.Clear;
+    Dm.Fconexao.Params.Add('DriverID=FB');
+    Dm.Fconexao.Params.Add('Database=C:\SISTEMA\CADASTRO.FDB');
+    Dm.Fconexao.Params.Add('User_Name=SYSDBA');
+    Dm.Fconexao.Params.Add('Password=masterkey');
+    Dm.Fconexao.Params.Add('Protocol=TCPIP');
+    Dm.Fconexao.Params.Add('Server=localhost');
+    Dm.Fconexao.Params.Add('Port=3050');
+    Dm.Fconexao.LoginPrompt := False;
+
+    try
+      Dm.Fconexao.Connected := True;
+    except
+      on E: Exception do
+      begin
+        ShowMessage('Erro ao conectar ao banco: ' + E.Message);
+        Exit;
+      end;
+    end;
+  end;
+end;
+
+procedure TFCadProdutos.Image2MouseEnter(Sender: TObject);
+begin
+   ListB.Visible:= True;
+   AtualizarGridProdutos1.Visible:= False;
+end;
+
+procedure TFCadProdutos.Image2MouseLeave(Sender: TObject);
+begin
+    ListB.Visible:= False;
+    AtualizarGridProdutos1.Visible:= True;
+end;
+
+end.

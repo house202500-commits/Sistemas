@@ -5,23 +5,30 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, FrmCadastro,
-  Vcl.Buttons, dxGDIPlusClasses, Vcl.Mask;
+  Vcl.Buttons, dxGDIPlusClasses, Vcl.Mask,     conexao,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.FB, // Para FireBird
+  FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client,FrmConsult, Vcl.DBCtrls, Data.DB;
 
 type
   TCadCEP = class(TForm)
     PnCEP: TPanel;
     Label12: TLabel;
     Label1: TLabel;
-    Edit1: TEdit;
+    EdtEndereco: TEdit;
     Label2: TLabel;
-    Edit3: TEdit;
+    EdtConituacao: TEdit;
     CbUF: TComboBox;
     Label3: TLabel;
-    Edit4: TEdit;
+    EdtBairro: TEdit;
     Label4: TLabel;
-    Edit5: TEdit;
+    EdtCidade: TEdit;
     Label5: TLabel;
-    ComboBox1: TComboBox;
+    CBBrasil: TComboBox;
     Image1: TImage;
     Panel4: TPanel;
     btnFechar: TSpeedButton;
@@ -31,7 +38,6 @@ type
     btnSalvar: TSpeedButton;
     Label13: TLabel;
     EdtCEP: TMaskEdit;
-    Label21: TLabel;
 
     procedure btnFecharClick(Sender: TObject);
     procedure btnFecharMouseLeave(Sender: TObject);
@@ -41,6 +47,7 @@ type
     procedure btnLimparMouseLeave(Sender: TObject);
     procedure btnLimparMouseEnter(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -81,6 +88,46 @@ begin
    btnLimpar.Font.Color := clWhite;
 end;
 
+procedure TCadCEP.btnSalvarClick(Sender: TObject);
+var
+  Qry: TFDQuery;
+  IdCEP: Integer;
+begin
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := Dm.FConexao;
+
+    Qry.SQL.Text :=
+      'INSERT INTO CEP (CEP, LOGRADOURO, CIDADE, UF) ' +
+      'VALUES (:CEP, :LOGRADOURO, :CIDADE, :UF)';
+
+    Qry.ParamByName('CEP').AsString        := EdtCEP.Text;
+    Qry.ParamByName('LOGRADOURO').AsString := EdtEndereco.Text;
+    Qry.ParamByName('CIDADE').AsString     := EdtCidade.Text;
+    Qry.ParamByName('UF').AsString         := CbUF.Text;
+
+    Qry.ExecSQL;
+
+    Qry.SQL.Text := 'SELECT MAX(ID_CEP) AS ID_CEP FROM CEP';
+    Qry.Open;
+
+    IdCEP := Qry.FieldByName('ID_CEP').AsInteger;
+    Qry.Close;
+
+    ShowMessage('Dados salvos com sucesso!');
+
+    FrmClientes.EditCEP.Text :=  EdtCEP.Text;
+    FrmClientes.EditEndereco.Text :=  EdtEndereco.Text;
+    FrmClientes.EditBairro.Text := EdtBairro.Text;
+    FrmClientes.EditCidade.Text  := EdtCidade.Text;
+    FrmClientes.LBUF.Caption := CbUF.Text;
+
+  finally
+    Qry.Free;
+
+  end;
+end;
+
 procedure TCadCEP.btnSalvarMouseEnter(Sender: TObject);
 begin
    btnSalvar.Font.Color := $00908E4C;
@@ -95,6 +142,35 @@ procedure TCadCEP.FormCreate(Sender: TObject);
 begin
   EdtCEP.EditMask := '00000\-000;1;_';
   EdtCEP.Text := '';
+
+  CbUF.Items.Clear;
+  CbUF.Items.Add('AC');
+  CbUF.Items.Add('AL');
+  CbUF.Items.Add('AP');
+  CbUF.Items.Add('AM');
+  CbUF.Items.Add('BA');
+  CbUF.Items.Add('CE');
+  CbUF.Items.Add('DF');
+  CbUF.Items.Add('ES');
+  CbUF.Items.Add('GO');
+  CbUF.Items.Add('MA');
+  CbUF.Items.Add('MT');
+  CbUF.Items.Add('MS');
+  CbUF.Items.Add('MG');
+  CbUF.Items.Add('PA');
+  CbUF.Items.Add('PB');
+  CbUF.Items.Add('PR');
+  CbUF.Items.Add('PE');
+  CbUF.Items.Add('PI');
+  CbUF.Items.Add('RJ');
+  CbUF.Items.Add('RN');
+  CbUF.Items.Add('RS');
+  CbUF.Items.Add('RO');
+  CbUF.Items.Add('RR');
+  CbUF.Items.Add('SC');
+  CbUF.Items.Add('SP');
+  CbUF.Items.Add('SE');
+  CbUF.Items.Add('TO');
 
 end;
 

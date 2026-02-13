@@ -1,0 +1,27 @@
+unit URelatorio;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, frxClass, frxDBSet,conexao;
+
+type
+  TDRelatorio = class(TDataModule)
+    VW_VENDAS_MOVIMENTO: TfrxDBDataset;
+    frxReport1: TfrxReport;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DRelatorio: TDRelatorio;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.

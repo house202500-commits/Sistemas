@@ -1,4 +1,4 @@
-unit FrmVendas;
+﻿unit FrmVendas;
 
 interface
 
@@ -6,7 +6,12 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB, Vcl.StdCtrls,
   Vcl.Grids, Vcl.DBGrids, Vcl.Buttons, dxGDIPlusClasses, Vcl.ComCtrls,FrmAdicConf,
-  System.Actions, Vcl.ActnList, System.ImageList, Vcl.ImgList,FrmConsult;
+  System.Actions, Vcl.ActnList, System.ImageList, Vcl.ImgList,FrmConsult,conexao,FrmCompTela,
+    FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client,URelatorio, FrmVendTela;
 
 type
   TFrmVenda = class(TForm)
@@ -17,12 +22,10 @@ type
     Label3: TLabel;
     Edit3: TEdit;
     Image1: TImage;
-    Label5: TLabel;
-    Label6: TLabel;
     Panel2: TPanel;
     btnAdic: TSpeedButton;
     DBGrid1: TDBGrid;
-    Label7: TLabel;
+    LbValorTl: TLabel;
     Label8: TLabel;
     Panel3: TPanel;
     Label9: TLabel;
@@ -45,9 +48,17 @@ type
     Panel10: TPanel;
     Panel11: TPanel;
     btnFechar: TSpeedButton;
-    btnCanc: TSpeedButton;
+    btnExibe: TSpeedButton;
     btnSalvVen: TSpeedButton;
     LisBox: TListBox;
+    LbEnd: TLabel;
+    LbCid: TLabel;
+    Button1: TButton;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    DBGrid2: TDBGrid;
+    Button2: TButton;
+    Button3: TButton;
     procedure btnAdicClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnAdicMouseEnter(Sender: TObject);
@@ -58,19 +69,30 @@ type
     procedure btnEditMouseLeave(Sender: TObject);
     procedure btnSalvVenMouseEnter(Sender: TObject);
     procedure btnImprimirMouseEnter(Sender: TObject);
-    procedure btnCancMouseEnter(Sender: TObject);
+    procedure btnExibeMouseEnter(Sender: TObject);
     procedure btnFecharMouseEnter(Sender: TObject);
     procedure btnSalvVenMouseLeave(Sender: TObject);
     procedure btnImprimirMouseLeave(Sender: TObject);
-    procedure btnCancMouseLeave(Sender: TObject);
+    procedure btnExibeMouseLeave(Sender: TObject);
     procedure btnFecharMouseLeave(Sender: TObject);
     procedure btnFecharClick(Sender: TObject);
     procedure Image1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnEditClick(Sender: TObject);
+    procedure DBGrid1CellClick(Column: TColumn);
 
+    procedure CarregarCliente(IDCliente: Integer);
+    procedure AtualizaDgridProd;
+    procedure Button1Click(Sender: TObject);
+    procedure btnImprimirClick(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure btnExibeClick(Sender: TObject);
 
 
   private
     { Private declarations }
+     FIDClienteAtual: Integer;
+     FIDProdutoAtual: Integer;
   public
     { Public declarations }
   end;
@@ -83,9 +105,25 @@ implementation
 {$R *.dfm}
 
 
+procedure TFrmVenda.AtualizaDgridProd;
+begin
+  FrmTelaCompras.LbNumCompr.Caption := FrmAdicionar.mtItens.FieldByName('CODIGO').AsString;
+  FrmTelaCompras.LbDesProdC.Caption := FrmAdicionar.mtItens.FieldByName('DESCRICAO').AsString;
+  FrmTelaCompras.LbVUnitC.Caption   := FormatFloat('0.00', FrmAdicionar.mtItens.FieldByName('VALOR_UNIT').AsFloat);
+  FrmTelaCompras.LbDescontC.Caption := FormatFloat('0.00', FrmAdicionar.mtItens.FieldByName('DESCONTO').AsFloat) + '%';
+  FrmTelaCompras.LbVlorItemC.Caption:= FormatFloat('0.00', FrmAdicionar.mtItens.FieldByName('TOTAL_ITEM').AsFloat);
+  FrmTelaCompras.CbQuatEditar.Text  := FrmAdicionar.mtItens.FieldByName('QUANTIDADE').AsString;
+
+  FrmTelaCompras.LbCliente.Caption:= Edit3.Text;
+
+  FrmTelaCompras.ShowModal;
+end;
+
+
 procedure TFrmVenda.btnAdicClick(Sender: TObject);
 begin
   FrmAdicionar.visible := not FrmAdicionar.visible;
+  Edit3.Text;
 
 end;
 
@@ -99,14 +137,24 @@ begin
     btnAdic.Font.Color := clWhite;
 end;
 
-procedure TFrmVenda.btnCancMouseEnter(Sender: TObject);
+procedure TFrmVenda.btnExibeClick(Sender: TObject);
 begin
-   btnCanc.Font.Color := $00908E4C;
+   FrmTelaVendas.show;
 end;
 
-procedure TFrmVenda.btnCancMouseLeave(Sender: TObject);
+procedure TFrmVenda.btnExibeMouseEnter(Sender: TObject);
 begin
-   btnCanc.Font.Color := clWhite;
+   btnExibe.Font.Color := $00908E4C;
+end;
+
+procedure TFrmVenda.btnExibeMouseLeave(Sender: TObject);
+begin
+   btnExibe.Font.Color := clWhite;
+end;
+
+procedure TFrmVenda.btnEditClick(Sender: TObject);
+begin
+AtualizaDgridProd;
 end;
 
 procedure TFrmVenda.btnEditMouseEnter(Sender: TObject);
@@ -133,6 +181,19 @@ procedure TFrmVenda.btnFecharMouseLeave(Sender: TObject);
 begin
    btnFechar.Font.Color := clWhite;
 end;
+
+procedure TFrmVenda.btnImprimirClick(Sender: TObject);
+begin
+
+  Dm.FdVendasProd.Close;
+  Dm.FdVendasProd.SQL.Text := 'SELECT * FROM VENDAS';
+  Dm.FdVendasProd.Open;
+
+  DRelatorio.VW_VENDAS_MOVIMENTO.DataSet := Dm.FDView;
+
+  DRelatorio.frxReport1.ShowReport;
+end;
+
 
 procedure TFrmVenda.btnImprimirMouseEnter(Sender: TObject);
 begin
@@ -165,9 +226,141 @@ begin
    btnSalvVen.Font.Color := clWhite;
 end;
 
+
+procedure TFrmVenda.Button1Click(Sender: TObject);
+begin
+AtualizaDgridProd;
+FrmTelaCompras.Show;
+end;
+
+procedure TFrmVenda.Button2Click(Sender: TObject);
+begin
+  Dm.FDView.Close;
+  Dm.FDView.SQL.Text := 'SELECT * FROM VW_VENDAS_MOVIMENTO';
+  Dm.FDView.Open;
+  DBGrid2.DataSource := Dm.DataSView;
+
+    // Exibe o relatório
+  DRelatorio.frxReport1.ShowReport;
+end;
+
+procedure TFrmVenda.CarregarCliente(IDCliente: Integer);
+var
+  Qry: TFDQuery;
+begin
+  if IDCliente <= 0 then exit;
+
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := Dm.Fconexao;
+    Qry.SQL.Text := 'SELECT * FROM CLIENTES WHERE ID_CLIENTE = :ID AND STATUS = ''A''';
+    Qry.ParamByName('ID').AsInteger := IDCliente;
+    Qry.Open;
+
+
+
+    if not Qry.IsEmpty then
+    begin
+
+      FrmTelaCompras.Edit1.text := Qry.FieldByName('NOME_COMPLETO').AsString;
+
+      FrmTelaCompras.Edit2.text := IntToStr(FIDClienteAtual);
+
+      ShowMessage('✅ Cliente carregado para edição!');
+    end
+    else
+    begin
+      ShowMessage('❌ Cliente não encontrado ou inativo!');
+    end;
+
+  finally
+    Qry.Free;
+  end;
+end;
+
+procedure TFrmVenda.DBGrid1CellClick(Column: TColumn);
+begin
+AtualizaDgridProd;
+end;
+
+
 procedure TFrmVenda.FormCreate(Sender: TObject);
 begin
    Label10.Caption := FormatDateTime('dd/MM/yyyy', Now);
+
+end;
+
+procedure TFrmVenda.FormShow(Sender: TObject);
+VAR
+i: Integer;
+begin
+    DBGrid1.Columns[0].Title.Caption := 'CÓDIGO';
+    DBGrid1.Columns[1].Title.Alignment := taCenter;
+
+begin
+  for i := 0 to DBGrid1.Columns.Count - 1 do
+  begin
+    // CÓDIGO
+    if DBGrid1.Columns[i].FieldName = 'CODIGO' then
+    begin
+      DBGrid1.Columns[i].Title.Caption := 'CÓDIGO';
+      DBGrid1.Columns[i].Alignment := taLeftJustify;
+      DBGrid1.Columns[i].Title.Alignment := taLeftJustify;
+      DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      DBGrid1.Columns[i].Width := 70;
+    end;
+
+    // DESCRIÇÃO
+    if DBGrid1.Columns[i].FieldName = 'DESCRICAO' then
+    begin
+      DBGrid1.Columns[i].Title.Caption := 'DESCRIÇÃO';
+      DBGrid1.Columns[i].Alignment := taLeftJustify;
+      DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      DBGrid1.Columns[i].Width := 420;
+    end;
+
+    // QUANTIDADE
+    if DBGrid1.Columns[i].FieldName = 'QUANTIDADE' then
+    begin
+      DBGrid1.Columns[i].Title.Caption := 'QTD';
+      DBGrid1.Columns[i].Alignment := taCenter;
+      DBGrid1.Columns[i].Title.Alignment := taCenter;
+      DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      DBGrid1.Columns[i].Width := 60;
+    end;
+
+    // VALOR UNITÁRIO
+    if DBGrid1.Columns[i].FieldName = 'VALOR_UNIT' then
+    begin
+      DBGrid1.Columns[i].Title.Caption := 'VLR UNIT';
+      DBGrid1.Columns[i].Alignment := taRightJustify;
+      DBGrid1.Columns[i].Title.Alignment := taRightJustify;
+      DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      DBGrid1.Columns[i].Width := 90;
+    end;
+
+    // DESCONTO
+    if DBGrid1.Columns[i].FieldName = 'DESCONTO' then
+    begin
+      DBGrid1.Columns[i].Title.Caption := 'DESC %';
+      DBGrid1.Columns[i].Alignment := taRightJustify;
+      DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      DBGrid1.Columns[i].Width := 70;
+    end;
+
+    // TOTAL
+    if DBGrid1.Columns[i].FieldName = 'TOTAL_ITEM' then
+    begin
+      DBGrid1.Columns[i].Title.Caption := 'TOTAL';
+      DBGrid1.Columns[i].Alignment := taRightJustify;
+      DBGrid1.Columns[i].Title.Alignment := taRightJustify;
+      DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      DBGrid1.Columns[i].Width := 100;
+    end;
+
+  end;
+end;
+
 end;
 
 procedure TFrmVenda.Image1Click(Sender: TObject);

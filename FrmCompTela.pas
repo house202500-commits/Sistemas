@@ -4,7 +4,15 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+      conexao,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.FB, // Para FireBird
+  FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client,FrmConsult, Vcl.DBCtrls, Data.DB;
 
 type
   TFrmTelaCompras = class(TForm)
@@ -27,6 +35,18 @@ type
     LbNumCompr: TLabel;
     Label13: TLabel;
     Label1: TLabel;
+    CbQuatEditar: TComboBox;
+    Button1: TButton;
+    mtItens: TFDMemTable;
+    dsItens: TDataSource;
+    Button2: TButton;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    procedure CbQuatEditarChange(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure AjusteDgrid1;
   private
     { Private declarations }
   public
@@ -37,7 +57,196 @@ var
   FrmTelaCompras: TFrmTelaCompras;
 
 implementation
-
+ uses
+ FrmVendas;
 {$R *.dfm}
+
+procedure TFrmTelaCompras.AjusteDgrid1;
+VAR
+i: Integer;
+begin
+    FrmVenda.DBGrid1.Columns[0].Title.Caption := 'CÓDIGO';
+    FrmVenda.DBGrid1.Columns[1].Title.Alignment := taCenter;
+
+begin
+  for i := 0 to FrmVenda.DBGrid1.Columns.Count - 1 do
+  begin
+    // CÓDIGO
+    if FrmVenda.DBGrid1.Columns[i].FieldName = 'CODIGO' then
+    begin
+      FrmVenda.DBGrid1.Columns[i].Title.Caption := 'CÓDIGO';
+      FrmVenda.DBGrid1.Columns[i].Alignment := taLeftJustify;
+      FrmVenda.DBGrid1.Columns[i].Title.Alignment := taLeftJustify;
+      FrmVenda.DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      FrmVenda.DBGrid1.Columns[i].Width := 70;
+    end;
+
+    // DESCRIÇÃO
+    if FrmVenda.DBGrid1.Columns[i].FieldName = 'DESCRICAO' then
+    begin
+      FrmVenda.DBGrid1.Columns[i].Title.Caption := 'DESCRIÇÃO';
+      FrmVenda.DBGrid1.Columns[i].Alignment := taLeftJustify;
+      FrmVenda.DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      FrmVenda.DBGrid1.Columns[i].Width := 420;
+    end;
+
+    // QUANTIDADE
+    if FrmVenda.DBGrid1.Columns[i].FieldName = 'QUANTIDADE' then
+    begin
+      FrmVenda.DBGrid1.Columns[i].Title.Caption := 'QTD';
+      FrmVenda.DBGrid1.Columns[i].Alignment := taCenter;
+      FrmVenda.DBGrid1.Columns[i].Title.Alignment := taCenter;
+      FrmVenda.DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      FrmVenda.DBGrid1.Columns[i].Width := 60;
+    end;
+
+    // VALOR UNITÁRIO
+    if FrmVenda.DBGrid1.Columns[i].FieldName = 'VALOR_UNIT' then
+    begin
+      FrmVenda.DBGrid1.Columns[i].Title.Caption := 'VLR UNIT';
+      FrmVenda.DBGrid1.Columns[i].Alignment := taRightJustify;
+      FrmVenda.DBGrid1.Columns[i].Title.Alignment := taRightJustify;
+      FrmVenda.DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      FrmVenda.DBGrid1.Columns[i].Width := 90;
+    end;
+
+    // DESCONTO
+    if FrmVenda.DBGrid1.Columns[i].FieldName = 'DESCONTO' then
+    begin
+      FrmVenda.DBGrid1.Columns[i].Title.Caption := 'DESC %';
+      FrmVenda.DBGrid1.Columns[i].Alignment := taRightJustify;
+      FrmVenda.DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      FrmVenda.DBGrid1.Columns[i].Width := 70;
+    end;
+
+    // TOTAL
+    if FrmVenda.DBGrid1.Columns[i].FieldName = 'TOTAL_ITEM' then
+    begin
+      FrmVenda.DBGrid1.Columns[i].Title.Caption := 'TOTAL';
+      FrmVenda.DBGrid1.Columns[i].Alignment := taRightJustify;
+      FrmVenda.DBGrid1.Columns[i].Title.Alignment := taRightJustify;
+      FrmVenda.DBGrid1.Columns[i].Title.Font.Style := [fsBold];
+      FrmVenda.DBGrid1.Columns[i].Width := 100;
+    end;
+
+  end;
+end;
+end;
+
+
+procedure TFrmTelaCompras.Button1Click(Sender: TObject);
+var
+  Quant: Integer;
+  ValUnit, Desc, TotItem, SomaTotal: Double;
+begin
+  Quant   := StrToIntDef(CbQuatEditar.Text, 1);
+  ValUnit := StrToFloatDef(LbVUnitC.Caption, 0);
+  Desc    := StrToFloatDef(StringReplace(LbDescontC.Caption, '%', '', [rfReplaceAll]), 0) / 100;
+
+  TotItem := Quant * ValUnit * (1 - Desc);
+
+  if mtItens.Locate('DESCRICAO', LbDesProdC.Caption, []) then
+  begin
+    mtItens.Edit;
+    mtItens.FieldByName('QUANTIDADE').AsInteger := Quant;
+    mtItens.FieldByName('TOTAL_ITEM').AsFloat   := TotItem;
+    mtItens.Post;
+  end;
+
+  SomaTotal := 0;
+  mtItens.First;
+  while not mtItens.Eof do
+  begin
+    SomaTotal := SomaTotal + mtItens.FieldByName('TOTAL_ITEM').AsFloat;
+    mtItens.Next;
+  end;
+  FrmVenda.LbValorTl.Caption := FormatFloat('0.00', SomaTotal);
+
+  Close;
+end;
+
+
+procedure TFrmTelaCompras.Button2Click(Sender: TObject);
+var
+  Quant,Cod: Integer;
+  ValUnit, Desc, TotItem, SomaTotal: Double;
+  Descricao: string;
+begin
+
+  Cod := StrToIntDef(LbNumCompr.Caption, 1);
+  Quant := StrToIntDef(CbQuatEditar.Text, 1);
+  Descricao := LbDesProdC.Caption;
+  ValUnit := StrToFloatDef(LbVUnitC.Caption, 0);
+  Desc := StrToFloatDef(StringReplace(LbDescontC.Caption, '%', '', [rfReplaceAll]), 0) / 100;
+
+  TotItem := Quant * ValUnit * (1 - Desc);
+
+  if mtItens.Locate('DESCRICAO', Descricao, []) then
+    mtItens.Edit
+  else
+    mtItens.Append;
+  mtItens.FieldByName('CODIGO').AsInteger := Cod;
+  mtItens.FieldByName('DESCRICAO').AsString := Descricao;
+  mtItens.FieldByName('QUANTIDADE').AsInteger := Quant;
+  mtItens.FieldByName('VALOR_UNIT').AsFloat := ValUnit;
+  mtItens.FieldByName('DESCONTO').AsFloat := Desc * 100;
+  mtItens.FieldByName('TOTAL_ITEM').AsFloat := TotItem;
+  mtItens.Post;
+
+  SomaTotal := 0;
+  mtItens.First;
+  while not mtItens.Eof do
+  begin
+    SomaTotal := SomaTotal + mtItens.FieldByName('TOTAL_ITEM').AsFloat;
+    mtItens.Next;
+  end;
+
+  FrmVenda.LbValorTl.Caption := FormatFloat('0.00', SomaTotal);
+
+   FrmVenda.DBGrid1.DataSource := dsItens;
+
+   AjusteDgrid1;
+
+  Close;
+end;
+
+
+procedure TFrmTelaCompras.CbQuatEditarChange(Sender: TObject);
+var
+  Quantidade: Integer;
+  ValorUnit: Double;
+  Total: Double;
+begin
+
+  if not TryStrToInt(CbQuatEditar.Text, Quantidade) then
+    Quantidade := 0;
+
+  if not TryStrToFloat(LbVUnitC.Caption, ValorUnit) then
+    ValorUnit := 0;
+
+  Total := Quantidade * ValorUnit;
+
+
+  LbTotalComp.Caption := FormatFloat('0.00', Total);
+  LbVlorItemC.Caption := FormatFloat('0.00', Total);
+end;
+
+procedure TFrmTelaCompras.FormCreate(Sender: TObject);
+begin
+
+  mtItens.FieldDefs.Clear;
+  mtItens.FieldDefs.Add('CODIGO', ftInteger);
+  mtItens.FieldDefs.Add('DESCRICAO', ftString, 100);
+  mtItens.FieldDefs.Add('QUANTIDADE', ftInteger);
+  mtItens.FieldDefs.Add('VALOR_UNIT', ftFloat);
+  mtItens.FieldDefs.Add('DESCONTO', ftFloat);
+  mtItens.FieldDefs.Add('TOTAL_ITEM', ftFloat);
+
+
+  mtItens.CreateDataSet;
+  //FrmVenda.DBGrid1.DataSource := dsItens;
+
+end;
+
 
 end.

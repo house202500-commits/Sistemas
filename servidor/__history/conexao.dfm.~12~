@@ -1,0 +1,114 @@
+object Dm: TDm
+  OldCreateOrder = False
+  Height = 325
+  Width = 373
+  object Fconexao: TFDConnection
+    Params.Strings = (
+      'Database=C:\SISTEMA_BancoDados\CADASTRO.FDB'
+      'User_Name=SYSDBA'
+      'Password=masterkey'
+      'DriverID=FB')
+    Connected = True
+    Left = 32
+    Top = 24
+  end
+  object FDdados: TFDQuery
+    Connection = Fconexao
+    Left = 136
+    Top = 24
+  end
+  object FDCadProd: TFDQuery
+    Connection = Fconexao
+    Left = 208
+    Top = 24
+  end
+  object FDTransaction1: TFDTransaction
+    Connection = Fconexao
+    Left = 40
+    Top = 104
+  end
+  object DtCadProd: TDataSource
+    DataSet = FDCadProd
+    Left = 128
+    Top = 192
+  end
+  object FDMVenda: TFDQuery
+    Connection = Fconexao
+    Left = 280
+    Top = 24
+  end
+  object QryCadClientes: TFDQuery
+    AfterScroll = QryCadClientesAfterScroll
+    Connection = Fconexao
+    Left = 136
+    Top = 104
+  end
+  object DSCadClientes: TDataSource
+    DataSet = QryCadClientes
+    Left = 24
+    Top = 192
+  end
+  object QryProdutos: TFDQuery
+    Connection = Fconexao
+    Left = 216
+    Top = 112
+  end
+  object mtItens: TFDQuery
+    Connection = Fconexao
+    Left = 304
+    Top = 112
+  end
+  object dsItens: TDataSource
+    DataSet = mtItens
+    Left = 304
+    Top = 192
+  end
+  object FdVendasProd: TFDQuery
+    Connection = Fconexao
+    Left = 216
+    Top = 200
+  end
+  object FDView: TFDQuery
+    Connection = Fconexao
+    SQL.Strings = (
+      'SELECT '
+      '    V.ID_VENDA,'
+      '    V.DATA_VENDA,'
+      '    C.ID_CLIENTE, '
+      '    C.NOME_COMPLETO,'
+      '    P.ID_PRODUTO,'
+      '    P.DESCRICAO AS NOME_DE_PRODUTO,'
+      '    V.QUANTIDADE,'
+      '    V.VALOR_UNITARIO,'
+      '    V.DESCONTO,'
+      '    V.VALOR_TOTAL,'
+      '    V.STATUS,'
+      '    CEP.LOGRADOURO,'
+      '    CEP.CIDADE,'
+      '    CEP.UF, '
+      '    CEP.ID_CEP,'
+      '    CEP.CEP'
+      'FROM VENDAS V'
+      'JOIN CLIENTES C ON V.ID_CLIENTE = C.ID_CLIENTE'
+      'JOIN PRODUTOS P ON V.ID_PRODUTO = P.ID_PRODUTO'
+      'JOIN CEP ON V.ID_CEP = CEP.ID_CEP'
+      'ORDER BY V.DATA_VENDA DESC;')
+    Left = 24
+    Top = 264
+  end
+  object DataSView: TDataSource
+    DataSet = FDView
+    Left = 88
+    Top = 264
+  end
+  object FDTtalVenda: TFDQuery
+    Connection = Fconexao
+    Left = 160
+    Top = 264
+  end
+  object DataSTtalVend: TDataSource
+    DataSet = FDTtalVenda
+    Left = 256
+    Top = 264
+  end
+end
